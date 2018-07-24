@@ -6,6 +6,20 @@ import os
 from apache_beam.io.filesystems import FileSystems
 
 
+def get_ext(filename):
+    name, ext = os.path.splitext(filename)
+    if ext == '.gz':
+        ext = get_ext(name) + ext
+    return ext
+
+
+def strip_ext(filename):
+    # strip of gz, assuming there will be another extension before .gz
+    if filename.endswith('.gz'):
+        filename = filename[:-3]
+    return os.path.splitext(filename)[0]
+
+
 def relative_path(base_path, path):
     if not base_path:
         return path
@@ -45,3 +59,22 @@ def get_output_file(filename, source_base_path, output_base_path, output_file_su
             None, output_file_suffix
         )
     )
+
+
+def base_path_for_file_list(file_list):
+    common_prefix = os.path.commonprefix(file_list)
+    i = max(common_prefix.rfind('/'), common_prefix.rfind('\\'))
+    if i >= 0:
+        return common_prefix[:i]
+    return ''
+
+
+def get_or_validate_base_path(file_list, base_path):
+    common_path = base_path_for_file_list(file_list)
+    if base_path:
+        if not common_path.startswith(base_path):
+            raise AssertionError(
+                "invalid base path '%s', common path is: '%s'" % (base_path, common_path)
+            )
+        return base_path
+    return common_path

@@ -15,8 +15,6 @@ You can run the following to install Apache Beam:
 pip install -r requirements.prereq.txt
 ```
 
-Note: only utility functions within the `sciencebeam_utils.beam_utils` package require Apache Beam
-
 ## Dependencies
 
 Dependencies not already mentioned in the prerequisites can be installed by running:

@@ -5,3 +5,7 @@ disable=missing-docstring,invalid-name,no-self-use,too-few-public-methods,bad-co
 ignored-classes=scoped_session
 extension-pkg-whitelist=lxml,apache_beam
 ignored-modules=lxml.builder,apache_beam
+
+[SIMILARITIES]
+min-similarity-lines=10
+ignore-imports=yes
