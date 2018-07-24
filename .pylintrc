@@ -1,0 +1,7 @@
+[MESSAGES CONTROL]
+disable=missing-docstring,invalid-name,no-self-use,too-few-public-methods,bad-continuation
+
+[TYPECHECK]
+ignored-classes=scoped_session
+extension-pkg-whitelist=lxml,apache_beam
+ignored-modules=lxml.builder,apache_beam

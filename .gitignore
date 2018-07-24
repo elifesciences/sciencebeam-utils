@@ -1,0 +1,14 @@
+/.vscode
+/venv
+/dist
+/*.egg-info
+/.eggs
+
+/.cache
+/.temp
+
+*.pyc
+*.so
+*.o
+*.c
+

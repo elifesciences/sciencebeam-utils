@@ -1,0 +1,15 @@
+.vscode
+venv
+dist
+*.egg-info
+*.md
+.travis.yml
+Jenkinsfile
+
+.cache
+.temp
+
+**/*.pyc
+**/*.so
+**/*.o
+**/*.c
