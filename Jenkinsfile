@@ -25,6 +25,15 @@ elifeLibrary {
                 sh 'docker-compose down -v'
             }
         }
+
+        stage 'Push release', {
+            // def isNew = sh(script: "git tag | grep v${candidateVersion}", returnStatus: true) != 0
+            // if (isNew) {
+            //     sh "git tag v${candidateVersion} && git push origin v${candidateVersion}"
+            //     sh "twine upload dist/*"
+            // }
+        }
+
     }
 
     elifeMainlineOnly {
