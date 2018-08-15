@@ -5,17 +5,24 @@ elifeLibrary {
         commit = elifeGitRevision()
     }
 
-    stage 'Build image', {
-        sh 'docker build -t elife/sciencebeam-utils .'
-    }
+    node('containers-jenkins-plugin') {
+        stage 'Build images', {
+            checkout scm
+            dockerComposeBuild(commit)
+        }
 
-    stage 'Run tests', {
-        elifeLocalTests './project_tests.sh'
+        stage 'Project tests', {
+            try {
+                sh "IMAGE_TAG=${commit} docker-compose run --rm sciencebeam-utils ./project_tests.sh"
+            } finally {
+                sh 'docker-compose down -v'
+            }
+        }
     }
 
     elifeMainlineOnly {
-        stage 'Merge to master', {
-            elifeGitMoveToBranch commit, 'master'
+        stage 'Approval', {
+            elifeGitMoveToBranch commit, 'approved'
         }
     }
 }
