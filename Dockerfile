@@ -18,3 +18,5 @@ COPY *.conf *.sh *.in *.txt *.py .pylintrc ${PROJECT_HOME}/
 
 COPY requirements.dev.txt ${PROJECT_HOME}/
 RUN pip install -r requirements.dev.txt
+
+RUN python setup.py sdist bdist_wheel
