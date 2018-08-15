@@ -6,9 +6,16 @@ elifeLibrary {
     }
 
     node('containers-jenkins-plugin') {
+        def candidateVersion
         stage 'Build images', {
             checkout scm
             dockerComposeBuild(commit)
+            try {
+                candidateVersion = sh(script: "IMAGE_TAG=${commit} docker-compose run --rm ./print_version.sh", returnStdout: true).trim()
+                echo "Candidate version: v${candidateVersion}"
+            } finally {
+                sh 'docker-compose down -v'
+            }
         }
 
         stage 'Project tests', {
