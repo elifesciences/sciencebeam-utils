@@ -5,9 +5,3 @@ services:
         build:
             context: .
         image: elifesciences/sciencebeam-utils:${IMAGE_TAG}
-        environment:
-            - TWINE_USERNAME=$TWINE_USERNAME
-            - TWINE_PASSWORD=$TWINE_PASSWORD
-            - TWINE_REPOSITORY=$TWINE_REPOSITORY
-            - TWINE_REPOSITORY_URL=$TWINE_REPOSITORY_URL
-            - TWINE_CERT=$TWINE_CERT
