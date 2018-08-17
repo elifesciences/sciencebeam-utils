@@ -11,7 +11,7 @@ elifeLibrary {
             checkout scm
             dockerComposeBuild(commit)
             try {
-                candidateVersion = sh(script: "IMAGE_TAG=${commit} docker-compose run --rm sciencebeam-utils ./print_version.sh", returnStdout: true).trim()
+                candidateVersion = sh(script: "IMAGE_TAG=${commit} docker-compose run sciencebeam-utils ./print_version.sh", returnStdout: true).trim()
                 echo "Candidate version: v${candidateVersion}"
             } finally {
                 sh 'docker-compose down -v'
@@ -20,7 +20,7 @@ elifeLibrary {
 
         stage 'Project tests', {
             try {
-                sh "IMAGE_TAG=${commit} docker-compose run --rm sciencebeam-utils ./project_tests.sh"
+                sh "IMAGE_TAG=${commit} docker-compose run sciencebeam-utils ./project_tests.sh"
             } finally {
                 sh 'docker-compose down -v'
             }
