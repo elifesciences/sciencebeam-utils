@@ -39,8 +39,8 @@ elifeLibrary {
     }
 
     elifeMainlineOnly {
-        stage 'Approval', {
-            elifeGitMoveToBranch commit, 'approved'
+        stage 'Merge to master', {
+            elifeGitMoveToBranch commit, 'master'
         }
     }
 }
