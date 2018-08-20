@@ -8,6 +8,7 @@ Provides utility functions to ScienceBeam projects.
 
 - Python 2.7 ([currently Apache Beam doesn't support Python 3](https://issues.apache.org/jira/browse/BEAM-1373))
 - [Apache Beam](https://beam.apache.org/)
+- [Docker](https://www.docker.com/) and [Docker Compose](https://docs.docker.com/compose/)
 
 You can run the following to install Apache Beam:
 
@@ -44,5 +45,7 @@ pytest-watch -- -m "not slow"
 Build container and run project tests:
 
 ```bash
-docker build -t elife/sciencebeam-utils. && ./project_tests.sh && echo "exit code: $?"
+docker-compose build && \
+    docker-compose run --rm sciencebeam-utils ./project_tests.sh && \
+    echo "exit code: $?"
 ```
