@@ -2,4 +2,5 @@
 
 set -e
 
-pytest sciencebeam_utils && pylint sciencebeam_utils
+pytest sciencebeam_utils && \
+    pylint sciencebeam_utils
