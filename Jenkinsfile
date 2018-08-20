@@ -5,12 +5,48 @@ elifeLibrary {
         commit = elifeGitRevision()
     }
 
-    stage 'Build image', {
-        sh 'docker build -t elife/sciencebeam-utils .'
-    }
+    node('containers-jenkins-plugin') {
+        def candidateVersion
+        stage 'Build images', {
+            checkout scm
+            dockerComposeBuild(commit)
+            try {
+                candidateVersion = sh(
+                    script: (
+                        "IMAGE_TAG=${commit} " +
+                        "docker-compose -f docker-compose.yml -f docker-compose.ci.yml run " +
+                        "sciencebeam-utils ./print_version.sh"
+                    ),
+                    returnStdout: true
+                ).trim()
+                echo "Candidate version: v${candidateVersion}"
+            } finally {
+                sh 'docker-compose down -v'
+            }
+        }
 
-    stage 'Run tests', {
-        elifeLocalTests './project_tests.sh'
+        stage 'Project tests', {
+            try {
+                sh "IMAGE_TAG=${commit} " +
+                    "docker-compose -f docker-compose.yml -f docker-compose.ci.yml " +
+                    "run sciencebeam-utils ./project_tests.sh"
+            } finally {
+                sh 'docker-compose down -v'
+            }
+        }
+
+        elifeMainlineOnly {
+            stage 'Push release', {
+                def isNew = sh(script: "git tag | grep v${candidateVersion}", returnStatus: true) != 0
+                if (isNew) {
+                    sh "git tag v${candidateVersion} && git push origin v${candidateVersion}"
+                    sh "IMAGE_TAG=${commit} " +
+                        "docker-compose -f docker-compose.yml -f docker-compose.ci.yml run " +
+                        "sciencebeam-utils twine upload dist/*"
+                }
+            }
+        }
+
     }
 
     elifeMainlineOnly {

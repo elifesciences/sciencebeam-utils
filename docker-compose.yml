@@ -1,0 +1,7 @@
+version: '3'
+
+services:
+    sciencebeam-utils:
+        build:
+            context: .
+        image: elifesciences/sciencebeam-utils:${IMAGE_TAG}
