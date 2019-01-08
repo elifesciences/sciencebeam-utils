@@ -3,6 +3,7 @@ import csv
 import logging
 from math import trunc
 from random import shuffle
+from datetime import datetime
 
 from apache_beam.io.filesystems import FileSystems
 
@@ -199,6 +200,10 @@ def save_file_sets(output_filenames, delimiter, header_row, data_rows_by_set):
         save_file_set(output_filename, delimiter, header_row, set_data_rows)
 
 
+def get_backup_file_suffix():
+    return '.backup-%s' % datetime.utcnow().strftime(r'%Y%m%d-%H%M%S')
+
+
 def run(args):
     process_args(args)
     ext = get_ext(args.input)
@@ -231,6 +236,15 @@ def run(args):
         fill=args.fill,
         existing_split=existing_file_sets
     )
+
+    if existing_file_sets:
+        backup_suffix = get_backup_file_suffix()
+        save_file_sets(
+            [s + backup_suffix for s in output_filenames],
+            delimiter,
+            header_row,
+            existing_file_sets
+        )
 
     save_file_sets(
         output_filenames,

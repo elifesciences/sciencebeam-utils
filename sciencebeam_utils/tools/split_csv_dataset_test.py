@@ -1,12 +1,25 @@
 from collections import namedtuple
+from datetime import datetime
 
+from mock import patch
+
+import pytest
+
+from . import split_csv_dataset as split_csv_dataset_module
 from .split_csv_dataset import (
     extract_proportions_from_args,
     split_rows,
     output_filenames_for_names,
+    get_backup_file_suffix,
     parse_args,
     run
 )
+
+
+@pytest.fixture(name='get_backup_file_suffix_mock')
+def _get_backup_file_suffix():
+    with patch.object(split_csv_dataset_module, 'get_backup_file_suffix') as m:
+        yield m
 
 
 def create_args(**kwargs):
@@ -103,6 +116,13 @@ class TestGetOutputFilenamesForNames(object):
         ) == ['out-train.tsv', 'out-test.tsv']
 
 
+class TestGetBackupFileSuffix(object):
+    @patch.object(split_csv_dataset_module, 'datetime')
+    def test_should_return_backup_suffix_with_datetime(self, datetime_mock):
+        datetime_mock.utcnow.return_value = datetime(2001, 2, 3, 4, 5, 6)
+        assert get_backup_file_suffix() == '.backup-20010203-040506'
+
+
 class TestRun(object):
     def test_should_split_train_test(self, tmpdir):
         file_list = tmpdir.join('file-list.tsv')
@@ -126,7 +146,7 @@ class TestRun(object):
             ['header', 'row3', 'row4']
         )
 
-    def test_should_split_train_test_with_existing(self, tmpdir):
+    def test_should_split_train_test_with_existing_split(self, tmpdir):
         file_list = tmpdir.join('file-list.tsv')
         train_file_list = tmpdir.join('file-list-train.tsv')
         test_file_list = tmpdir.join('file-list-test.tsv')
@@ -149,4 +169,30 @@ class TestRun(object):
         assert (
             test_file_list.read().splitlines() ==
             ['header', 'row2', 'row4']
+        )
+
+    def test_should_backup_existing_split(self, tmpdir, get_backup_file_suffix_mock):
+        get_backup_file_suffix_mock.return_value = '.backup'
+        file_list = tmpdir.join('file-list.tsv')
+        train_file_list = tmpdir.join('file-list-train.tsv')
+        test_file_list = tmpdir.join('file-list-test.tsv')
+        file_list.write('\n'.join(['header', 'row1', 'row2', 'row3', 'row4']))
+        train_file_list.write('\n'.join(['header', 'row1']))
+        test_file_list.write('\n'.join(['header', 'row2']))
+
+        args = parse_args([
+            '--input', str(file_list),
+            '--train', str(0.5),
+            '--extend-existing'
+        ])
+        run(args)
+
+        assert (
+            tmpdir.join('file-list-train.tsv.backup').read().splitlines() ==
+            ['header', 'row1']
+        )
+
+        assert (
+            tmpdir.join('file-list-test.tsv.backup').read().splitlines() ==
+            ['header', 'row2']
         )
