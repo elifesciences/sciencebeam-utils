@@ -47,11 +47,14 @@ def extract_proportions_from_args(args):
     return proportions
 
 
-def split_rows(rows, percentages, fill=False):
-    size = len(rows)
+def get_chunk_size_list(size, percentages, fill=False):
     chunk_size_list = [int(trunc(p * size)) for p in percentages]
     if fill:
         chunk_size_list[-1] = size - sum(chunk_size_list[:-1])
+    return chunk_size_list
+
+
+def split_row_chunks(rows, chunk_size_list):
     chunk_offset_list = [0]
     for chunk_size in chunk_size_list[0:-1]:
         chunk_offset_list.append(chunk_offset_list[-1] + chunk_size)
@@ -60,6 +63,30 @@ def split_rows(rows, percentages, fill=False):
     return [
         rows[chunk_offset:chunk_offset + chunk_size]
         for chunk_offset, chunk_size in zip(chunk_offset_list, chunk_size_list)
+    ]
+
+
+def _to_hashable(value):
+    return str(value)
+
+
+def split_rows(rows, percentages, fill=False, existing_split=None):
+    if not existing_split:
+        chunk_size_list = get_chunk_size_list(len(rows), percentages, fill=fill)
+        return split_row_chunks(rows, chunk_size_list)
+    LOGGER.debug('existing_split: %s', existing_split)
+    all_existing_rows = {
+        _to_hashable(row)
+        for split_rows in existing_split
+        for row in split_rows
+    }
+    remaining_rows = [row for row in rows if _to_hashable(row) not in all_existing_rows]
+    chunk_size_list = get_chunk_size_list(len(remaining_rows), percentages, fill=fill)
+    return [
+        existing_rows + new_split
+        for existing_rows, new_split in zip(
+            existing_split, split_row_chunks(remaining_rows, chunk_size_list)
+        )
     ]
 
 
@@ -98,6 +125,10 @@ def parse_args(argv=None):
         help='use up all of the remaining data rows for the last set'
     )
     parser.add_argument(
+        '--extend-existing', action='store_true', default=False,
+        help='extend and preserve the existing split (new entries will be added)'
+    )
+    parser.add_argument(
         '--no-header', action='store_true', default=False,
         help='input file does not contain a header'
     )
@@ -123,6 +154,18 @@ def read_csv_with_header(input_filename, delimiter, no_header):
         header_row = None if no_header else next(reader)
         data_rows = list(reader)
         return header_row, data_rows
+
+
+def read_csv_data(input_filename, delimiter, no_header):
+    _, data_rows = read_csv_with_header(input_filename, delimiter, no_header)
+    return data_rows
+
+
+def load_file_sets(filenames, delimiter, no_header):
+    return [
+        read_csv_data(filename, delimiter, no_header)
+        for filename in filenames
+    ]
 
 
 def save_file_set(output_filename, delimiter, header_row, set_data_rows):
@@ -160,10 +203,17 @@ def run(args):
 
     if args.random:
         shuffle(data_rows)
+
+    if args.extend_existing:
+        existing_file_sets = load_file_sets(output_filenames, delimiter, args.no_header)
+    else:
+        existing_file_sets = None
+
     data_rows_by_set = split_rows(
         data_rows,
         [p for _, p in proportions],
-        fill=args.fill
+        fill=args.fill,
+        existing_split=existing_file_sets
     )
 
     save_file_sets(
