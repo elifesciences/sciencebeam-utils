@@ -77,14 +77,14 @@ class TestSplitRows(object):
             list(range(6, 11))
         ]
 
-    def test_should_add_new_files_to_existing_split_train_test(self):
+    def test_should_add_new_items_to_existing_split_train_test(self):
         existing_split = [list(range(3)), list(range(3, 5))]
         assert split_rows(list(range(10)), [0.6, 0.4], existing_split=existing_split) == [
             existing_split[0] + list(range(5, 8)),
             existing_split[1] + list(range(8, 10))
         ]
 
-    def test_should_add_new_files_to_existing_split_train_test_csv_row(self):
+    def test_should_add_new_items_to_existing_split_train_as_test_nested_rows(self):
         existing_split = [list(range(3)), list(range(3, 5))]
         assert split_rows(
             _flat_rows_to_nested_rows(range(10)), [0.6, 0.4],
@@ -96,7 +96,7 @@ class TestSplitRows(object):
             existing_split[1] + list(range(8, 10))
         ])
 
-    def test_should_add_new_files_to_existing_uneven_split_train_test(self):
+    def test_should_add_new_items_to_existing_uneven_split_train_test(self):
         existing_split = [list(range(3)), list(range(3, 4))]
         assert split_rows(list(range(10)), [0.6, 0.4], existing_split=existing_split) == [
             existing_split[0] + list(range(4, 7)),
