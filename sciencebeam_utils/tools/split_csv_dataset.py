@@ -81,11 +81,16 @@ def split_rows(rows, percentages, fill=False, existing_split=None):
         for row in split_rows
     }
     remaining_rows = [row for row in rows if _to_hashable(row) not in all_existing_rows]
-    chunk_size_list = get_chunk_size_list(len(remaining_rows), percentages, fill=fill)
+    chunk_size_list = get_chunk_size_list(len(rows), percentages, fill=fill)
+    existing_chunk_size_list = [len(existing_rows) for existing_rows in existing_split]
+    remaining_chunk_size_list = [
+        a - b
+        for a, b in zip(chunk_size_list, existing_chunk_size_list)
+    ]
     return [
         existing_rows + new_split
         for existing_rows, new_split in zip(
-            existing_split, split_row_chunks(remaining_rows, chunk_size_list)
+            existing_split, split_row_chunks(remaining_rows, remaining_chunk_size_list)
         )
     ]
 

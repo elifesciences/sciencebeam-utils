@@ -83,6 +83,13 @@ class TestSplitRows(object):
             existing_split[1] + list(range(8, 10))
         ])
 
+    def test_should_add_new_files_to_existing_uneven_split_train_test(self):
+        existing_split = [list(range(3)), list(range(3, 4))]
+        assert split_rows(list(range(10)), [0.6, 0.4], existing_split=existing_split) == [
+            existing_split[0] + list(range(4, 7)),
+            existing_split[1] + list(range(7, 10))
+        ]
+
 
 class TestGetOutputFilenamesForNames(object):
     def test_should_add_name_and_ext_with_path_sep_if_out_ends_with_slash(self):
