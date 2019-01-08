@@ -27,7 +27,8 @@ SOME_VALUE_2 = 'value 2'
 SOME_VALUE_CAUSING_EXCEPTION = 1
 
 
-SOME_FN = lambda x: x.upper()
+def SOME_FN(x):
+    return x.upper()
 
 
 def FN_RAISING_EXCEPTION(_):
@@ -70,7 +71,7 @@ class TestMapOrLog(BeamTest):
 
     def test_should_not_increase_error_metric_counter_if_no_exception_raised(self):
         with TestPipeline() as p:
-            _ = (
+            _ = (  # noqa: F841
                 p |
                 beam.Create([SOME_VALUE_1]) |
                 MapOrLog(FN_RAISING_EXCEPTION, error_count=ERROR_COUNT_METRIC_NAME)
@@ -79,7 +80,7 @@ class TestMapOrLog(BeamTest):
 
     def test_should_increase_error_metric_counter_if_exception_was_raised(self):
         with TestPipeline() as p:
-            _ = (
+            _ = (  # noqa: F841
                 p |
                 beam.Create([SOME_VALUE_1]) |
                 MapOrLog(FN_RAISING_EXCEPTION, error_count=ERROR_COUNT_METRIC_NAME)
@@ -103,7 +104,7 @@ class TestTransformAndCount(BeamTest):
 
     def test_should_increase_count_per_item(self):
         with TestPipeline() as p:
-            _ = (
+            _ = (  # noqa: F841
                 p |
                 beam.Create([SOME_VALUE_1, SOME_VALUE_2]) |
                 TransformAndCount(
@@ -115,7 +116,7 @@ class TestTransformAndCount(BeamTest):
 
     def test_should_increase_count_per_item_using_function(self):
         with TestPipeline() as p:
-            _ = (
+            _ = (  # noqa: F841
                 p |
                 beam.Create([SOME_VALUE_1, SOME_VALUE_2]) |
                 TransformAndCount(

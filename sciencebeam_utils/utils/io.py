@@ -5,7 +5,7 @@ import errno
 def makedirs(path, exists_ok=False):
     try:
         # Python 3
-        os.makedirs(path, exists_ok=exists_ok) # pylint: disable=unexpected-keyword-arg
+        os.makedirs(path, exists_ok=exists_ok)  # pylint: disable=unexpected-keyword-arg
     except TypeError:
         # Python 2
         try:

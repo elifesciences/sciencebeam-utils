@@ -56,12 +56,6 @@ def _save_file_pairs_to_csv():
         yield m
 
 
-@pytest.fixture(name='save_file_pairs_to_csv_mock')
-def _save_file_pairs_to_csv():
-    with patch.object(find_file_pairs, 'save_file_pairs_to_csv') as m:
-        yield m
-
-
 @pytest.fixture(name='parse_args_mock')
 def _parse_args():
     with patch.object(find_file_pairs, 'parse_args') as m:
