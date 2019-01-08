@@ -103,6 +103,13 @@ class TestSplitRows(object):
             existing_split[1] + list(range(7, 10))
         ]
 
+    def test_should_remove_items_not_present_in_total_list(self):
+        existing_split = [['1', 'x'], ['2', 'y']]
+        assert split_rows(['1', '2', '3', '4'], [0.5, 0.5], existing_split=existing_split) == [
+            ['1', '3'],
+            ['2', '4']
+        ]
+
 
 class TestGetOutputFilenamesForNames(object):
     def test_should_add_name_and_ext_with_path_sep_if_out_ends_with_slash(self):

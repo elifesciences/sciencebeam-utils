@@ -90,9 +90,13 @@ def split_rows(rows, percentages, fill=False, existing_split=None):
     if not_existing_rows:
         LOGGER.warning(
             'some rows (%d of %d) from the existing split do not exist'
-            ' in the source list, e.g.: %s',
+            ' in the source list and will be removed, e.g.: %s',
             len(not_existing_rows), len(all_existing_rows), list(not_existing_rows)[:3]
         )
+        existing_split = [
+            [row for row in existing_rows if _to_hashable(row) in rows_set]
+            for existing_rows in existing_split
+        ]
     remaining_rows = [row for row in rows if _to_hashable(row) not in all_existing_rows]
     chunk_size_list = get_chunk_size_list(len(rows), percentages, fill=fill)
     existing_chunk_size_list = [len(existing_rows) for existing_rows in existing_split]
