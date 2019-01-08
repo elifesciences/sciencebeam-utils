@@ -1,6 +1,7 @@
 import argparse
 import csv
 import logging
+import errno
 from math import trunc
 from random import shuffle
 from datetime import datetime
@@ -185,6 +186,15 @@ def load_file_sets(filenames, delimiter, no_header):
     ]
 
 
+def load_file_sets_or_none(filenames, delimiter, no_header):
+    try:
+        return load_file_sets(filenames, delimiter, no_header)
+    except IOError as e:
+        if e.errno == errno.ENOENT:
+            return None
+        raise e
+
+
 def save_file_set(output_filename, delimiter, header_row, set_data_rows):
     mime_type = 'text/tsv' if delimiter == '\t' else 'text/csv'
     with FileSystems.create(output_filename, mime_type=mime_type) as f:
@@ -225,10 +235,7 @@ def run(args):
     if args.random:
         shuffle(data_rows)
 
-    try:
-        existing_file_sets = load_file_sets(output_filenames, delimiter, args.no_header)
-    except IOError:
-        existing_file_sets = None
+    existing_file_sets = load_file_sets_or_none(output_filenames, delimiter, args.no_header)
 
     data_rows_by_set = split_rows(
         data_rows,
