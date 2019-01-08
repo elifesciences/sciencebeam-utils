@@ -75,11 +75,22 @@ def split_rows(rows, percentages, fill=False, existing_split=None):
         chunk_size_list = get_chunk_size_list(len(rows), percentages, fill=fill)
         return split_row_chunks(rows, chunk_size_list)
     LOGGER.debug('existing_split: %s', existing_split)
+    rows_set = {
+        _to_hashable(row)
+        for row in rows
+    }
     all_existing_rows = {
         _to_hashable(row)
         for existing_rows in existing_split
         for row in existing_rows
     }
+    not_existing_rows = all_existing_rows - rows_set
+    if not_existing_rows:
+        LOGGER.warning(
+            'some rows (%d of %d) from the existing split do not exist'
+            ' in the source list, e.g.: %s',
+            len(not_existing_rows), len(all_existing_rows), list(not_existing_rows)[:3]
+        )
     remaining_rows = [row for row in rows if _to_hashable(row) not in all_existing_rows]
     chunk_size_list = get_chunk_size_list(len(rows), percentages, fill=fill)
     existing_chunk_size_list = [len(existing_rows) for existing_rows in existing_split]
