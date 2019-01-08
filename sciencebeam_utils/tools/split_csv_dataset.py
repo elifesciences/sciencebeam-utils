@@ -225,16 +225,16 @@ def run(args):
     if args.random:
         shuffle(data_rows)
 
-    if args.extend_existing:
+    try:
         existing_file_sets = load_file_sets(output_filenames, delimiter, args.no_header)
-    else:
+    except IOError:
         existing_file_sets = None
 
     data_rows_by_set = split_rows(
         data_rows,
         [p for _, p in proportions],
         fill=args.fill,
-        existing_split=existing_file_sets
+        existing_split=existing_file_sets if args.extend_existing else None
     )
 
     if existing_file_sets:
