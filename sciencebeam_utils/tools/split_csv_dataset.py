@@ -143,8 +143,8 @@ def parse_args(argv=None):
         help='use up all of the remaining data rows for the last set'
     )
     parser.add_argument(
-        '--extend-existing', action='store_true', default=False,
-        help='extend and preserve the existing split (new entries will be added)'
+        '--no-extend-existing', action='store_true', default=False,
+        help='do not extend and preserve the existing split (new entries will be addedby default)'
     )
     parser.add_argument(
         '--no-header', action='store_true', default=False,
@@ -241,7 +241,7 @@ def run(args):
         data_rows,
         [p for _, p in proportions],
         fill=args.fill,
-        existing_split=existing_file_sets if args.extend_existing else None
+        existing_split=existing_file_sets if not args.no_extend_existing else None
     )
 
     if existing_file_sets:

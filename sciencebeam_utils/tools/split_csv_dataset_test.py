@@ -156,8 +156,7 @@ class TestRun(object):
 
         args = parse_args([
             '--input', str(file_list),
-            '--train', str(0.5),
-            '--extend-existing'
+            '--train', str(0.5)
         ])
         run(args)
 
@@ -182,8 +181,7 @@ class TestRun(object):
 
         args = parse_args([
             '--input', str(file_list),
-            '--train', str(0.5),
-            '--extend-existing'
+            '--train', str(0.5)
         ])
         run(args)
 
