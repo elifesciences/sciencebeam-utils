@@ -77,8 +77,8 @@ def split_rows(rows, percentages, fill=False, existing_split=None):
     LOGGER.debug('existing_split: %s', existing_split)
     all_existing_rows = {
         _to_hashable(row)
-        for split_rows in existing_split
-        for row in split_rows
+        for existing_rows in existing_split
+        for row in existing_rows
     }
     remaining_rows = [row for row in rows if _to_hashable(row) not in all_existing_rows]
     chunk_size_list = get_chunk_size_list(len(rows), percentages, fill=fill)
