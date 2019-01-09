@@ -77,7 +77,7 @@ def _to_hashable(value):
     return tuple(value)
 
 
-def _to_rows_set(rows):
+def _to_row_set(rows):
     return {_to_hashable(row) for row in rows}
 
 
@@ -99,8 +99,8 @@ def split_rows(
     if not existing_split:
         return _split_rows_without_existing_split(rows, percentages, fill=fill)
     LOGGER.debug('existing_split: %s', existing_split)
-    all_current_rows = _to_rows_set(rows)
-    all_existing_rows = _to_rows_set(chain(*existing_split))
+    all_current_rows = _to_row_set(rows)
+    all_existing_rows = _to_row_set(chain(*existing_split))
     not_existing_rows = all_existing_rows - all_current_rows
     if not_existing_rows:
         LOGGER.warning(
