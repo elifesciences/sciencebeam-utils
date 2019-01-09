@@ -6,6 +6,7 @@ from math import trunc
 from random import shuffle
 from datetime import datetime
 from itertools import chain
+from typing import List  # pylint: disable=unused-import
 
 from apache_beam.io.filesystems import FileSystems
 
@@ -27,6 +28,9 @@ from sciencebeam_utils.tools.tool_utils import (
 
 
 LOGGER = logging.getLogger(__name__)
+
+
+Row = List[str]
 
 
 def extract_proportions_from_args(args):
@@ -86,7 +90,12 @@ def _substract_list(list1, list2):
     return [a - b for a, b in zip(list1, list2)]
 
 
-def split_rows(rows, percentages, fill=False, existing_split=None):
+def split_rows(
+        rows,  # type: List[Row]
+        percentages,  # type: List[float]
+        fill=False,  # type: bool
+        existing_split=None):  # type: List[List[Row]]
+    # type: (...) -> List[Row]
     if not existing_split:
         return _split_rows_without_existing_split(rows, percentages, fill=fill)
     LOGGER.debug('existing_split: %s', existing_split)
