@@ -6,7 +6,7 @@ from math import trunc
 from random import shuffle
 from datetime import datetime
 from itertools import chain
-from typing import List  # pylint: disable=unused-import
+from typing import List
 
 from apache_beam.io.filesystems import FileSystems
 
