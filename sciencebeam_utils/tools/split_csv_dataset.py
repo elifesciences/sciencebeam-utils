@@ -70,7 +70,7 @@ def split_row_chunks(rows, chunk_size_list):
 
 
 def _to_hashable(value):
-    return str(value)
+    return tuple(value) if isinstance(value, list) else value
 
 
 def _to_rows_set(rows):
