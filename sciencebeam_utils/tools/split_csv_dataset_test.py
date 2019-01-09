@@ -43,72 +43,52 @@ class TestExtractProportionsFromArgs(object):
         ) == [('train', 0.6), ('test', 0.4)]
 
 
-def _flat_rows_to_nested_rows(rows):
-    return [[row] for row in rows]
+def _chars_to_rows(chars):
+    return [[c] for c in chars]
 
 
-def _flat_rows_list_to_nested_rows_list(rows_list):
-    return [_flat_rows_to_nested_rows(rows) for rows in rows_list]
+def _chars_to_rows_list(*chars_list):
+    return [_chars_to_rows(chars) for chars in chars_list]
 
 
 class TestSplitRows(object):
     def test_should_split_train_test(self):
-        assert split_rows(list(range(10)), [0.6, 0.4]) == [
-            list(range(6)),
-            list(range(6, 10))
-        ]
+        assert split_rows(
+            _chars_to_rows('0123456789'), [0.6, 0.4]
+        ) == _chars_to_rows_list('012345', '6789')
 
     def test_should_split_train_test_validation(self):
-        assert split_rows(list(range(10)), [0.6, 0.3, 0.1]) == [
-            list(range(6)),
-            list(range(6, 9)),
-            list(range(9, 10))
-        ]
+        assert split_rows(
+            _chars_to_rows('0123456789'), [0.6, 0.3, 0.1]
+        ) == _chars_to_rows_list('012345', '678', '9')
 
     def test_should_round_down(self):
-        assert split_rows(list(range(11)), [0.6, 0.4]) == [
-            list(range(6)),
-            list(range(6, 10))
-        ]
+        assert split_rows(
+            _chars_to_rows('0123456789X'), [0.6, 0.4]
+        ) == _chars_to_rows_list('012345', '6789')
 
     def test_should_fill_last_chunk_if_enabled(self):
-        assert split_rows(list(range(11)), [0.6, 0.4], fill=True) == [
-            list(range(6)),
-            list(range(6, 11))
-        ]
+        assert split_rows(
+            _chars_to_rows('0123456789X'), [0.6, 0.4], fill=True
+        ) == _chars_to_rows_list('012345', '6789X')
 
     def test_should_add_new_items_to_existing_split_train_test(self):
-        existing_split = [list(range(3)), list(range(3, 5))]
-        assert split_rows(list(range(10)), [0.6, 0.4], existing_split=existing_split) == [
-            existing_split[0] + list(range(5, 8)),
-            existing_split[1] + list(range(8, 10))
-        ]
-
-    def test_should_add_new_items_to_existing_split_train_as_test_nested_rows(self):
-        existing_split = [list(range(3)), list(range(3, 5))]
+        existing_split = _chars_to_rows_list('012', '34')
         assert split_rows(
-            _flat_rows_to_nested_rows(range(10)), [0.6, 0.4],
-            existing_split=_flat_rows_list_to_nested_rows_list(
-                existing_split
-            )
-        ) == _flat_rows_list_to_nested_rows_list([
-            existing_split[0] + list(range(5, 8)),
-            existing_split[1] + list(range(8, 10))
-        ])
+            _chars_to_rows('0123456789'), [0.6, 0.4], existing_split=existing_split
+        ) == _chars_to_rows_list('012' + '567', '34' + '89')
 
     def test_should_add_new_items_to_existing_uneven_split_train_test(self):
-        existing_split = [list(range(3)), list(range(3, 4))]
-        assert split_rows(list(range(10)), [0.6, 0.4], existing_split=existing_split) == [
-            existing_split[0] + list(range(4, 7)),
-            existing_split[1] + list(range(7, 10))
-        ]
+        existing_split = _chars_to_rows_list('012', '3')
+        assert split_rows(
+            _chars_to_rows('0123456789'), [0.6, 0.4], existing_split=existing_split
+        ) == _chars_to_rows_list('012' + '456', '3' + '789')
 
     def test_should_remove_items_not_present_in_total_list(self):
-        existing_split = [['1', 'x'], ['2', 'y']]
-        assert split_rows(['1', '2', '3', '4'], [0.5, 0.5], existing_split=existing_split) == [
-            ['1', '3'],
-            ['2', '4']
-        ]
+        existing_split = _chars_to_rows_list('1x', '2y')
+        assert split_rows(
+            _chars_to_rows('1234'), [0.5, 0.5], existing_split=existing_split
+        ) == _chars_to_rows_list('13', '24')
 
 
 class TestGetOutputFilenamesForNames(object):
