@@ -5,6 +5,7 @@ import errno
 from math import trunc
 from random import shuffle
 from datetime import datetime
+from itertools import chain
 
 from apache_beam.io.filesystems import FileSystems
 
@@ -72,21 +73,29 @@ def _to_hashable(value):
     return str(value)
 
 
+def _to_rows_set(rows):
+    return {_to_hashable(row) for row in rows}
+
+
+def _split_rows_without_existing_split(rows, percentages, fill=False):
+    chunk_size_list = get_chunk_size_list(len(rows), percentages, fill=fill)
+    return split_row_chunks(rows, chunk_size_list)
+
+
+def _substract_list(list1, list2):
+    return [
+        a - b
+        for a, b in zip(list1, list2)
+    ]
+
+
 def split_rows(rows, percentages, fill=False, existing_split=None):
     if not existing_split:
-        chunk_size_list = get_chunk_size_list(len(rows), percentages, fill=fill)
-        return split_row_chunks(rows, chunk_size_list)
+        return _split_rows_without_existing_split(rows, percentages, fill=fill)
     LOGGER.debug('existing_split: %s', existing_split)
-    rows_set = {
-        _to_hashable(row)
-        for row in rows
-    }
-    all_existing_rows = {
-        _to_hashable(row)
-        for existing_rows in existing_split
-        for row in existing_rows
-    }
-    not_existing_rows = all_existing_rows - rows_set
+    all_current_rows = _to_rows_set(rows)
+    all_existing_rows = _to_rows_set(chain(*existing_split))
+    not_existing_rows = all_existing_rows - all_current_rows
     if not_existing_rows:
         LOGGER.warning(
             'some rows (%d of %d) from the existing split do not exist'
@@ -94,16 +103,13 @@ def split_rows(rows, percentages, fill=False, existing_split=None):
             len(not_existing_rows), len(all_existing_rows), list(not_existing_rows)[:3]
         )
         existing_split = [
-            [row for row in existing_rows if _to_hashable(row) in rows_set]
+            [row for row in existing_rows if _to_hashable(row) in all_current_rows]
             for existing_rows in existing_split
         ]
     remaining_rows = [row for row in rows if _to_hashable(row) not in all_existing_rows]
     chunk_size_list = get_chunk_size_list(len(rows), percentages, fill=fill)
     existing_chunk_size_list = [len(existing_rows) for existing_rows in existing_split]
-    remaining_chunk_size_list = [
-        a - b
-        for a, b in zip(chunk_size_list, existing_chunk_size_list)
-    ]
+    remaining_chunk_size_list = _substract_list(chunk_size_list, existing_chunk_size_list)
     return [
         existing_rows + new_split
         for existing_rows, new_split in zip(
