@@ -96,7 +96,7 @@ class BeamTest(object):
 
 
 class MockWriteToText(beam.PTransform):
-    class WriteDoFn(beam.DoFn): # pylint: disable=abstract-method
+    class WriteDoFn(beam.DoFn):  # pylint: disable=abstract-method
         def __init__(self, file_path_prefix,
                      file_name_suffix='',
                      coder=ToStringCoder(),
@@ -113,7 +113,7 @@ class MockWriteToText(beam.PTransform):
             if self.header:
                 self.file_obj.write(self.coder.encode(self.header) + '\n')
 
-        def process(self, element): # pylint: disable=arguments-differ
+        def process(self, element):  # pylint: disable=arguments-differ
             assert self.file_obj
             self.file_obj.write(self.coder.encode(element) + '\n')
 
@@ -130,7 +130,7 @@ class MockWriteToText(beam.PTransform):
         super(MockWriteToText, self).__init__()
         self._sink = MockWriteToText.WriteDoFn(*args, **kwargs)
 
-    def expand(self, pcoll): # pylint: disable=arguments-differ
+    def expand(self, pcoll):  # pylint: disable=arguments-differ
         return pcoll | 'MockWriteToText' >> beam.ParDo(self._sink)
 
 

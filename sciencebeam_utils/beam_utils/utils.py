@@ -20,12 +20,16 @@ def MapSpy(f):
     return beam.Map(Spy(f))
 
 
+def _default_exception_log_fn(exception, value):
+    get_logger().warning(
+        'caught exception (ignoring item): %s, input: %.100s...',
+        exception, value, exc_info=exception
+    )
+
+
 def MapOrLog(fn, log_fn=None, error_count=None):
     if log_fn is None:
-        log_fn = lambda e, x: get_logger().warning(
-            'caught exception (ignoring item): %s, input: %.100s...',
-            e, x, exc_info=e
-        )
+        log_fn = _default_exception_log_fn
     error_counter = (
         Metrics.counter('MapOrLog', error_count)
         if error_count
@@ -35,7 +39,7 @@ def MapOrLog(fn, log_fn=None, error_count=None):
     def wrapper(x):
         try:
             yield fn(x)
-        except Exception as e: # pylint: disable=broad-except
+        except Exception as e:  # pylint: disable=broad-except
             if error_counter:
                 error_counter.inc()
             log_fn(e, x)
@@ -84,15 +88,21 @@ def _identity(x):
     return x
 
 
-def TransformAndLog(transform, log_fn=None, log_prefix='', log_value_fn=None, log_level='info'):
-    if log_fn is None:
-        if log_value_fn is None:
-            log_value_fn = _identity
-        log_level = LEVEL_MAP.get(log_level, log_level)
+def _get_default_output_log_fn(log_level, log_prefix, log_value_fn):
+    if log_value_fn is None:
+        log_value_fn = _identity
+    log_level = LEVEL_MAP.get(log_level, log_level)
 
-        log_fn = lambda x: get_logger().log(
+    def _log_fn(x):
+        get_logger().log(
             log_level, '%s%.50s...', log_prefix, log_value_fn(x)
         )
+    return _log_fn
+
+
+def TransformAndLog(transform, log_fn=None, log_prefix='', log_value_fn=None, log_level='info'):
+    if log_fn is None:
+        log_fn = _get_default_output_log_fn(log_level, log_prefix, log_value_fn)
 
     return GroupTransforms(lambda pcoll: (
         pcoll |
@@ -105,6 +115,10 @@ def random_key():
     return getrandbits(32)
 
 
+def _default_random_key_fn(_):
+    return random_key()
+
+
 def PreventFusion(key_fn=None, name="PreventFusion"):
     """
     Prevents fusion to allow better distribution across workers.
@@ -115,7 +129,7 @@ def PreventFusion(key_fn=None, name="PreventFusion"):
     TODO Replace by: https://github.com/apache/beam/pull/4040
     """
     if key_fn is None:
-        key_fn = lambda _: random_key()
+        key_fn = _default_random_key_fn
     return name >> GroupTransforms(lambda pcoll: (
         pcoll |
         "AddKey" >> beam.Map(lambda x: (key_fn(x), x)) |

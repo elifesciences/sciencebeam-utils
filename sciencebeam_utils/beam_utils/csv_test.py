@@ -43,7 +43,7 @@ class TestWriteDictCsv(BeamTest):
     def test_should_write_tsv_with_header(self, test_context):
         with patch_module_under_test(WriteToText=MockWriteToText):
             with TestPipeline() as p:
-                _ = (
+                _ = (  # noqa: F841
                     p |
                     beam.Create([{
                         'a': 'a1',

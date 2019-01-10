@@ -14,7 +14,7 @@ COPY requirements.txt ${PROJECT_HOME}/
 RUN pip install -r requirements.txt
 
 COPY sciencebeam_utils ${PROJECT_HOME}/sciencebeam_utils
-COPY *.conf *.sh *.in *.txt *.py .pylintrc ${PROJECT_HOME}/
+COPY *.conf *.sh *.in *.txt *.py .pylintrc .flake8 ${PROJECT_HOME}/
 
 COPY requirements.dev.txt ${PROJECT_HOME}/
 RUN pip install -r requirements.dev.txt
