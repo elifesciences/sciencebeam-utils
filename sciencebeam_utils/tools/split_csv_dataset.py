@@ -1,8 +1,12 @@
 import argparse
 import csv
 import logging
+import errno
 from math import trunc
 from random import shuffle
+from datetime import datetime
+from itertools import chain
+from typing import List
 
 from apache_beam.io.filesystems import FileSystems
 
@@ -26,6 +30,9 @@ from sciencebeam_utils.tools.tool_utils import (
 LOGGER = logging.getLogger(__name__)
 
 
+Row = List[str]
+
+
 def extract_proportions_from_args(args):
     digits = 3
     proportions = [
@@ -47,11 +54,14 @@ def extract_proportions_from_args(args):
     return proportions
 
 
-def split_rows(rows, percentages, fill=False):
-    size = len(rows)
+def get_chunk_size_list(size, percentages, fill=False):
     chunk_size_list = [int(trunc(p * size)) for p in percentages]
     if fill:
         chunk_size_list[-1] = size - sum(chunk_size_list[:-1])
+    return chunk_size_list
+
+
+def split_row_chunks(rows, chunk_size_list):
     chunk_offset_list = [0]
     for chunk_size in chunk_size_list[0:-1]:
         chunk_offset_list.append(chunk_offset_list[-1] + chunk_size)
@@ -60,6 +70,57 @@ def split_rows(rows, percentages, fill=False):
     return [
         rows[chunk_offset:chunk_offset + chunk_size]
         for chunk_offset, chunk_size in zip(chunk_offset_list, chunk_size_list)
+    ]
+
+
+def _to_hashable(value):
+    return tuple(value)
+
+
+def _to_row_set(rows):
+    return {_to_hashable(row) for row in rows}
+
+
+def _split_rows_without_existing_split(rows, percentages, fill=False):
+    chunk_size_list = get_chunk_size_list(len(rows), percentages, fill=fill)
+    return split_row_chunks(rows, chunk_size_list)
+
+
+def _substract_list(list1, list2):
+    return [a - b for a, b in zip(list1, list2)]
+
+
+def split_rows(
+        rows,  # type: List[Row]
+        percentages,  # type: List[float]
+        fill=False,  # type: bool
+        existing_split=None):  # type: List[List[Row]]
+    # type: (...) -> List[List[Row]]
+    if not existing_split:
+        return _split_rows_without_existing_split(rows, percentages, fill=fill)
+    LOGGER.debug('existing_split: %s', existing_split)
+    all_current_rows = _to_row_set(rows)
+    all_existing_rows = _to_row_set(chain(*existing_split))
+    not_existing_rows = all_existing_rows - all_current_rows
+    if not_existing_rows:
+        LOGGER.warning(
+            'some rows (%d of %d) from the existing split do not exist'
+            ' in the source list and will be removed, e.g.: %s',
+            len(not_existing_rows), len(all_existing_rows), list(not_existing_rows)[:3]
+        )
+        existing_split = [
+            [row for row in existing_rows if _to_hashable(row) in all_current_rows]
+            for existing_rows in existing_split
+        ]
+    remaining_rows = [row for row in rows if _to_hashable(row) not in all_existing_rows]
+    chunk_size_list = get_chunk_size_list(len(rows), percentages, fill=fill)
+    existing_chunk_size_list = [len(existing_rows) for existing_rows in existing_split]
+    remaining_chunk_size_list = _substract_list(chunk_size_list, existing_chunk_size_list)
+    return [
+        existing_rows + new_split
+        for existing_rows, new_split in zip(
+            existing_split, split_row_chunks(remaining_rows, remaining_chunk_size_list)
+        )
     ]
 
 
@@ -98,6 +159,10 @@ def parse_args(argv=None):
         help='use up all of the remaining data rows for the last set'
     )
     parser.add_argument(
+        '--no-extend-existing', action='store_true', default=False,
+        help='do not extend and preserve the existing split (new entries will be addedby default)'
+    )
+    parser.add_argument(
         '--no-header', action='store_true', default=False,
         help='input file does not contain a header'
     )
@@ -125,6 +190,27 @@ def read_csv_with_header(input_filename, delimiter, no_header):
         return header_row, data_rows
 
 
+def read_csv_data(input_filename, delimiter, no_header):
+    _, data_rows = read_csv_with_header(input_filename, delimiter, no_header)
+    return data_rows
+
+
+def load_file_sets(filenames, delimiter, no_header):
+    return [
+        read_csv_data(filename, delimiter, no_header)
+        for filename in filenames
+    ]
+
+
+def load_file_sets_or_none(filenames, delimiter, no_header):
+    try:
+        return load_file_sets(filenames, delimiter, no_header)
+    except IOError as e:
+        if e.errno == errno.ENOENT:
+            return None
+        raise e
+
+
 def save_file_set(output_filename, delimiter, header_row, set_data_rows):
     mime_type = 'text/tsv' if delimiter == '\t' else 'text/csv'
     with FileSystems.create(output_filename, mime_type=mime_type) as f:
@@ -138,6 +224,10 @@ def save_file_sets(output_filenames, delimiter, header_row, data_rows_by_set):
     for output_filename, set_data_rows in zip(output_filenames, data_rows_by_set):
         LOGGER.info('set size: %d (%s)', len(set_data_rows), output_filename)
         save_file_set(output_filename, delimiter, header_row, set_data_rows)
+
+
+def get_backup_file_suffix():
+    return '.backup-%s' % datetime.utcnow().strftime(r'%Y%m%d-%H%M%S')
 
 
 def run(args):
@@ -160,11 +250,24 @@ def run(args):
 
     if args.random:
         shuffle(data_rows)
+
+    existing_file_sets = load_file_sets_or_none(output_filenames, delimiter, args.no_header)
+
     data_rows_by_set = split_rows(
         data_rows,
         [p for _, p in proportions],
-        fill=args.fill
+        fill=args.fill,
+        existing_split=existing_file_sets if not args.no_extend_existing else None
     )
+
+    if existing_file_sets:
+        backup_suffix = get_backup_file_suffix()
+        save_file_sets(
+            [s + backup_suffix for s in output_filenames],
+            delimiter,
+            header_row,
+            existing_file_sets
+        )
 
     save_file_sets(
         output_filenames,
