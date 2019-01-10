@@ -55,7 +55,7 @@ class WriteDictCsv(beam.PTransform):
         self.file_name_suffix = file_name_suffix
         self.delimiter = csv_delimiter_by_filename(path + file_name_suffix)
 
-    def expand(self, pcoll): # pylint: disable=arguments-differ
+    def expand(self, pcoll):  # pylint: disable=arguments-differ
         return (
             pcoll |
             "ToList" >> beam.Map(DictToList(self.columns)) |
@@ -100,7 +100,7 @@ class CsvFileSource(FileBasedSource):
     and comma-delimited fields. Assumes UTF-8 encoding.
     """
 
-    def __init__( # pylint: disable=too-many-arguments
+    def __init__(  # pylint: disable=too-many-arguments
             self, file_pattern,
             compression_type=CompressionTypes.AUTO,
             delimiter=',', header=True, dictionary_output=True,
@@ -133,7 +133,7 @@ class CsvFileSource(FileBasedSource):
                 'header is required for the CSV reader to provide dictionary output'
             )
 
-    def read_records(self, file_name, range_tracker): # pylint: disable=arguments-differ,unused-argument
+    def read_records(self, file_name, range_tracker):  # noqa: E501 pylint: disable=arguments-differ,unused-argument
         # If a multi-file pattern was specified as a source then make sure the
         # start/end offsets use the default values for reading the entire file.
         headers = None
@@ -177,7 +177,7 @@ class ReadDictCsv(beam.PTransform):
         self.limit = limit
         self.row_num = 0
 
-    def expand(self, pcoll): # pylint: disable=arguments-differ
+    def expand(self, pcoll):  # pylint: disable=arguments-differ
         return (
             pcoll |
             beam.io.Read(CsvFileSource(
