@@ -48,23 +48,32 @@ def map_file_list_to_file_exists(file_list):
         return list(executor.map(FileSystems.exists, file_list))
 
 
-def format_file_exists_results(file_exists):
+def format_file_list(file_list):
+    return '%s' % file_list
+
+
+def format_file_exists_results(file_exists, file_list):
     if not file_exists:
         return 'empty file list'
     file_exists_count = sum(file_exists)
     file_missing_count = len(file_exists) - file_exists_count
+    files_missing = [s for s, exists in zip(file_list, file_exists) if not exists]
     return (
-        'files exist: %d (%.0f%%), files missing: %d (%.0f%%)' %
-        (
+        'files exist: %d (%.0f%%), files missing: %d (%.0f%%)%s' % (
             file_exists_count, 100.0 * file_exists_count / len(file_exists),
-            file_missing_count, 100.0 * file_missing_count / len(file_exists)
+            file_missing_count, 100.0 * file_missing_count / len(file_exists),
+            (
+                ' (example missing: %s)' % format_file_list(files_missing[:3])
+                if files_missing
+                else ''
+            )
         )
     )
 
 
 def check_files_and_report_result(file_list):
     file_exists = map_file_list_to_file_exists(file_list)
-    LOGGER.info('%s', format_file_exists_results(file_exists))
+    LOGGER.info('%s', format_file_exists_results(file_exists, file_list))
     assert sum(file_exists) > 0
 
 
