@@ -27,7 +27,7 @@ class TestPipeline(_TestPipeline):
         super(TestPipeline, self).__init__(*args, **kwargs)
         self._pipeline_result = None
 
-    def run(self):
+    def run(self):  # pylint: disable=arguments-differ
         # Make sure we're only running the pipeline once
         if not self._pipeline_result:
             self._pipeline_result = super(TestPipeline, self).run()
