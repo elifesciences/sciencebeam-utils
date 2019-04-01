@@ -19,7 +19,7 @@ build:
 
 
 test: build
-	$(RUN) ./project_tests.sh -- $(PYTEST_ARGS)
+	$(RUN) ./project_tests.sh
 
 
 watch: build
