@@ -1,7 +1,9 @@
 from __future__ import absolute_import
 
-from io import BytesIO
+import codecs
 import logging
+from contextlib import contextmanager
+from io import BytesIO
 
 from apache_beam.io.filesystems import FileSystems
 
@@ -11,6 +13,18 @@ DEFAULT_BUFFER_SIZE = 4096 * 1024
 
 def get_logger():
     return logging.getLogger(__name__)
+
+
+@contextmanager
+def open_file(path, mode='r', encoding='utf-8', **kwargs):
+    if mode == 'r' or mode == 'w':
+        info = codecs.lookup(encoding)
+        open_binary = FileSystems.open if mode == 'r' else FileSystems.create
+        with open_binary(path, **kwargs) as fp:
+            # Python 3 CSV package expects a text file
+            yield codecs.StreamReaderWriter(fp, info.streamreader, info.streamwriter)
+    else:
+        raise ValueError('invalid mode: %s' % mode)
 
 
 def read_all_from_path(path, buffer_size=DEFAULT_BUFFER_SIZE):

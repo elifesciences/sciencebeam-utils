@@ -65,19 +65,19 @@ class TestIsCsvOrTsvFileList(object):
 
 class TestLoadPlainFileList(object):
     def test_should_read_multiple_file_paths_from_file(self):
-        with NamedTemporaryFile() as f:
+        with NamedTemporaryFile('w') as f:
             f.write('\n'.join([FILE_1, FILE_2]))
             f.flush()
             assert load_plain_file_list(f.name) == [FILE_1, FILE_2]
 
     def test_should_read_unicode_file(self):
-        with NamedTemporaryFile() as f:
-            f.write('\n'.join([UNICODE_FILE_1.encode('utf-8')]))
+        with NamedTemporaryFile('w') as f:
+            f.write('\n'.join([UNICODE_FILE_1]))
             f.flush()
             assert load_plain_file_list(f.name) == [UNICODE_FILE_1]
 
     def test_should_apply_limit(self):
-        with NamedTemporaryFile() as f:
+        with NamedTemporaryFile('w') as f:
             f.write('\n'.join([FILE_1, FILE_2]))
             f.flush()
             assert load_plain_file_list(f.name, limit=1) == [FILE_1]
@@ -85,45 +85,45 @@ class TestLoadPlainFileList(object):
 
 class TestLoadCsvOrTsvFileList(object):
     def test_should_read_multiple_file_paths_from_file_with_header_using_column_name(self):
-        with NamedTemporaryFile() as f:
+        with NamedTemporaryFile('w') as f:
             f.write('\n'.join(['url', FILE_1, FILE_2]))
             f.flush()
             assert load_csv_or_tsv_file_list(f.name, 'url') == [FILE_1, FILE_2]
 
     def test_should_read_multiple_file_paths_from_file_with_header_using_column_index(self):
-        with NamedTemporaryFile() as f:
+        with NamedTemporaryFile('w') as f:
             f.write('\n'.join(['url', FILE_1, FILE_2]))
             f.flush()
             assert load_csv_or_tsv_file_list(f.name, 0) == [FILE_1, FILE_2]
 
     def test_should_read_multiple_file_paths_from_file_without_header(self):
-        with NamedTemporaryFile() as f:
+        with NamedTemporaryFile('w') as f:
             f.write('\n'.join([FILE_1, FILE_2]))
             f.flush()
             assert load_csv_or_tsv_file_list(f.name, 0, header=False) == [FILE_1, FILE_2]
 
     def test_should_read_unicode_file(self):
-        with NamedTemporaryFile() as f:
-            f.write('\n'.join(['url', UNICODE_FILE_1.encode('utf-8')]))
+        with NamedTemporaryFile('w') as f:
+            f.write('\n'.join(['url', UNICODE_FILE_1]))
             f.flush()
             assert load_csv_or_tsv_file_list(f.name, 'url') == [UNICODE_FILE_1]
 
     def test_should_raise_exception_if_column_name_is_invalid(self):
         with pytest.raises(ValueError):
-            with NamedTemporaryFile() as f:
+            with NamedTemporaryFile('w') as f:
                 f.write('\n'.join(['url', FILE_1, FILE_2]))
                 f.flush()
                 assert load_csv_or_tsv_file_list(f.name, 'xyz') == [FILE_1, FILE_2]
 
     def test_should_raise_exception_if_column_index_is_invalid(self):
         with pytest.raises(IndexError):
-            with NamedTemporaryFile() as f:
+            with NamedTemporaryFile('w') as f:
                 f.write('\n'.join(['url', FILE_1, FILE_2]))
                 f.flush()
                 assert load_csv_or_tsv_file_list(f.name, 1) == [FILE_1, FILE_2]
 
     def test_should_apply_limit(self):
-        with NamedTemporaryFile() as f:
+        with NamedTemporaryFile('w') as f:
             f.write('\n'.join(['url', FILE_1, FILE_2]))
             f.flush()
             assert load_csv_or_tsv_file_list(f.name, 'url', limit=1) == [FILE_1]

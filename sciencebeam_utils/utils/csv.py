@@ -1,9 +1,12 @@
 from __future__ import absolute_import
 
 import os
-import csv
+import logging
 
-import six
+from backports import csv  # pylint: disable=no-name-in-module
+
+
+LOGGER = logging.getLogger(__name__)
 
 
 TEMP_FILE_SUFFIX = '.part'
@@ -20,15 +23,7 @@ def open_csv_output(filename):
 
 
 def write_csv_rows(writer, iterable):
-    if six.PY2:
-        for row in iterable:
-            writer.writerow([
-                x.encode('utf-8') if isinstance(x, six.text_type) else x
-                for x in row
-            ])
-    else:
-        for row in iterable:
-            writer.writerow(row)
+    writer.writerows(iterable)
 
 
 def write_csv_row(writer, row):

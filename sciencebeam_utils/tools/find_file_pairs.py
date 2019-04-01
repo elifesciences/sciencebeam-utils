@@ -1,8 +1,7 @@
 import argparse
-import csv
 import logging
 
-from apache_beam.io.filesystems import FileSystems
+from backports import csv  # pylint: disable=no-name-in-module
 
 from sciencebeam_utils.utils.csv import (
     csv_delimiter_by_filename,
@@ -10,6 +9,7 @@ from sciencebeam_utils.utils.csv import (
 )
 
 from sciencebeam_utils.beam_utils.io import (
+    open_file,
     dirname,
     mkdirs_if_not_exists
 )
@@ -66,7 +66,7 @@ def save_file_pairs_to_csv(output_path, source_xml_pairs):
     mkdirs_if_not_exists(dirname(output_path))
     delimiter = csv_delimiter_by_filename(output_path)
     mime_type = 'text/tsv' if delimiter == '\t' else 'text/csv'
-    with FileSystems.create(output_path, mime_type=mime_type) as f:
+    with open_file(output_path, 'w', mime_type=mime_type) as f:
         writer = csv.writer(f, delimiter=delimiter)
         write_csv_rows(writer, [['source_url', 'xml_url']])
         write_csv_rows(writer, source_xml_pairs)

@@ -1,10 +1,11 @@
-FROM python:2.7.14-stretch
+FROM python:3.6.8-stretch
 
 ENV PROJECT_HOME=/srv/sciencebeam-utils
 WORKDIR ${PROJECT_HOME}
 
 ENV VENV=${PROJECT_HOME}/venv
-RUN virtualenv ${VENV}
+RUN pip install --no-cache-dir --only-binary --upgrade virtualenv \
+    && virtualenv ${VENV}
 ENV PYTHONUSERBASE=${VENV} PATH=${VENV}/bin:$PATH
 
 COPY requirements.prereq.txt ${PROJECT_HOME}/

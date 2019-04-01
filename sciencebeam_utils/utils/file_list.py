@@ -1,9 +1,10 @@
 from __future__ import absolute_import
 
-import codecs
-import csv
 import os
+import logging
 from itertools import islice
+
+from backports import csv  # pylint: disable=no-name-in-module
 
 from apache_beam.io.filesystems import FileSystems
 
@@ -11,10 +12,15 @@ from sciencebeam_utils.utils.csv import (
     csv_delimiter_by_filename
 )
 
+from sciencebeam_utils.beam_utils.io import open_file
+
 from .file_path import (
     relative_path,
     join_if_relative_path
 )
+
+
+LOGGER = logging.getLogger(__name__)
 
 
 def is_csv_or_tsv_file_list(file_list_path):
@@ -22,8 +28,8 @@ def is_csv_or_tsv_file_list(file_list_path):
 
 
 def load_plain_file_list(file_list_path, limit=None):
-    with FileSystems.open(file_list_path) as f:
-        lines = (x.rstrip() for x in codecs.getreader('utf-8')(f))
+    with open_file(file_list_path, 'r') as f:
+        lines = (x.rstrip() for x in f)
         if limit:
             lines = islice(lines, 0, limit)
         return list(lines)
@@ -31,7 +37,7 @@ def load_plain_file_list(file_list_path, limit=None):
 
 def load_csv_or_tsv_file_list(file_list_path, column, header=True, limit=None):
     delimiter = csv_delimiter_by_filename(file_list_path)
-    with FileSystems.open(file_list_path) as f:
+    with open_file(file_list_path, 'r') as f:
         reader = csv.reader(f, delimiter=delimiter)
         if not header:
             assert isinstance(column, int)
@@ -48,7 +54,7 @@ def load_csv_or_tsv_file_list(file_list_path, column, header=True, limit=None):
                         'column %s not found, available columns: %s' %
                         (column, header_row)
                     )
-        lines = (x[column_index].decode('utf-8') for x in reader)
+        lines = (x[column_index] for x in reader)
         if limit:
             lines = islice(lines, 0, limit)
         return list(lines)
