@@ -1,8 +1,9 @@
 from __future__ import absolute_import
 
 import logging
-import csv
-from io import BytesIO
+from io import StringIO
+
+from backports import csv
 
 from six import string_types
 
@@ -33,16 +34,16 @@ def DictToList(fields):
 
 def format_csv_rows(rows, delimiter=','):
     get_logger().debug('format_csv_rows, rows: %s', rows)
-    out = BytesIO()
+    out = StringIO()
     writer = csv.writer(out, delimiter=delimiter)
     writer.writerows([
         [
-            x.encode('utf-8') if isinstance(x, string_types) else x
+            x if isinstance(x, string_types) else x.decode('utf-8')
             for x in row
         ]
         for row in rows
     ])
-    result = out.getvalue().decode('utf-8').rstrip('\r\n')
+    result = out.getvalue().rstrip('\r\n')
     get_logger().debug('format_csv_rows, result: %s', result)
     return result
 
@@ -88,7 +89,10 @@ class ReadLineIterator(object):
         return self
 
     def next(self):
-        line = self._obj.readline()
+        return self.__next__()
+
+    def __next__(self):
+        line = self._obj.readline().decode('utf-8')
         if line is None or line == '':
             raise StopIteration
         return line

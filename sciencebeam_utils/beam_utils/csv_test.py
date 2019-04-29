@@ -35,7 +35,7 @@ def patch_module_under_test(**kwargs):
 
 
 def to_csv(rows, delimiter):
-    return format_csv_rows(rows, delimiter).encode('utf-8').replace('\r\n', '\n') + '\n'
+    return (format_csv_rows(rows, delimiter).replace('\r\n', '\n') + '\n').encode('utf-8')
 
 
 @pytest.mark.slow
