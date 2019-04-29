@@ -1,4 +1,4 @@
-elifeLibrary {
+elifePipeline {
     def isNew
     def candidateVersion
     def commit
