@@ -183,7 +183,7 @@ class MockFileSystem(AbstractFileSystem):
     def match(self, patterns, limits=None):
         test_context = get_current_test_context()
         file_content_map = test_context.file_content_map
-        all_files = file_content_map.keys()
+        all_files = list(file_content_map.keys())
         if limits is None:
             limits = [None] * len(patterns)
         results = []
