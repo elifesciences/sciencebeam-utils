@@ -3,7 +3,7 @@ from __future__ import absolute_import
 import logging
 from io import StringIO
 
-from backports import csv
+from backports import csv  # pylint: disable=no-name-in-module
 
 from six import string_types
 
