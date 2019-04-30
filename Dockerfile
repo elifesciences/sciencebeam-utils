@@ -1,4 +1,5 @@
-FROM python:3.6.8-stretch
+ARG base_image
+FROM ${base_image}
 
 ENV PROJECT_HOME=/srv/sciencebeam-utils
 WORKDIR ${PROJECT_HOME}

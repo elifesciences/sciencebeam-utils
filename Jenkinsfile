@@ -17,7 +17,7 @@ elifeLibrary {
                     script: (
                         "IMAGE_TAG=${commit} " +
                         "docker-compose -f docker-compose.yml -f docker-compose.ci.yml run " +
-                        "sciencebeam-utils ./print_version.sh"
+                        "sciencebeam-utils-py2 ./print_version.sh"
                     ),
                     returnStdout: true
                 ).trim()
@@ -27,11 +27,21 @@ elifeLibrary {
             }
         }
 
-        stage 'Project tests', {
+        stage 'Project tests (PY2)', {
             try {
                 sh "IMAGE_TAG=${commit} " +
                     "docker-compose -f docker-compose.yml -f docker-compose.ci.yml " +
-                    "run sciencebeam-utils ./project_tests.sh"
+                    "run sciencebeam-utils-py2 ./project_tests.sh"
+            } finally {
+                sh 'docker-compose down -v'
+            }
+        }
+
+        stage 'Project tests (PY3)', {
+            try {
+                sh "IMAGE_TAG=${commit} " +
+                    "docker-compose -f docker-compose.yml -f docker-compose.ci.yml " +
+                    "run sciencebeam-utils-py3 ./project_tests.sh"
             } finally {
                 sh 'docker-compose down -v'
             }
@@ -43,7 +53,7 @@ elifeLibrary {
                 if (isNew) {
                     sh "IMAGE_TAG=${commit} " +
                         "docker-compose -f docker-compose.yml -f docker-compose.ci.yml run " +
-                        "sciencebeam-utils twine upload dist/*"
+                        "sciencebeam-utils-py2 twine upload dist/*"
                 }
             }
         }

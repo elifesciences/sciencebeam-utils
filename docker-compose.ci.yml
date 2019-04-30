@@ -2,6 +2,6 @@ version: '3'
 
 # to add images that are only used for tests
 services:
-    sciencebeam-utils:
+    sciencebeam-utils-py2:
         volumes:
             - ~/.pypirc:/root/.pypirc
