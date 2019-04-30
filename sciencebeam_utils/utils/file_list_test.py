@@ -71,7 +71,7 @@ class TestLoadPlainFileList(object):
             assert load_plain_file_list(f.name) == [FILE_1, FILE_2]
 
     def test_should_read_unicode_file(self):
-        with NamedTemporaryFile('w') as f:
+        with NamedTemporaryFile('wb') as f:
             f.write('\n'.join([UNICODE_FILE_1]).encode('utf-8'))
             f.flush()
             assert load_plain_file_list(f.name) == [UNICODE_FILE_1]
