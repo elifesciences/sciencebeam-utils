@@ -7,9 +7,11 @@ services:
             args:
                 base_image: python:2.7.14-stretch
         image: elifesciences/sciencebeam-utils-py2:${IMAGE_TAG}
+        networks: []
     sciencebeam-utils-py3:
         build:
             context: .
             args:
                 base_image: python:3.6.8-stretch
         image: elifesciences/sciencebeam-utils-py3:${IMAGE_TAG}
+        networks: []
