@@ -2,12 +2,12 @@ elifeLibrary {
     def candidateVersion
     def commit
 
-    stage 'Checkout', {
-        checkout scm
-        commit = elifeGitRevision()
-    }
-
     node('containers-jenkins-plugin') {
+        stage 'Checkout', {
+            checkout scm
+            commit = elifeGitRevision()
+        }
+
         stage 'Build images', {
             checkout scm
             dockerComposeBuild(commit)
@@ -47,19 +47,18 @@ elifeLibrary {
             }
         }
 
+        elifeMainlineOnly {
+            stage 'Merge to master', {
+                elifeGitMoveToBranch commit, 'master'
+            }
+        }
+
         elifeTagOnly { tag ->
             stage 'Push release', {
                 sh "IMAGE_TAG=${commit} " +
                     "docker-compose -f docker-compose.yml -f docker-compose.ci.yml run " +
                     "sciencebeam-utils-py2 twine upload dist/*"
             }
-        }
-
-    }
-
-    elifeMainlineOnly {
-        stage 'Merge to master', {
-            elifeGitMoveToBranch commit, 'master'
         }
     }
 }
