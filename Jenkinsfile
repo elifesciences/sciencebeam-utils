@@ -27,7 +27,7 @@ elifeLibrary {
             }
         }
 
-        stage 'Project tests (PY2)', {
+        parallel(['Project tests (PY2)': {
             try {
                 sh "IMAGE_TAG=${commit} " +
                     "docker-compose -f docker-compose.yml -f docker-compose.ci.yml " +
@@ -35,9 +35,8 @@ elifeLibrary {
             } finally {
                 sh 'docker-compose down -v'
             }
-        }
-
-        stage 'Project tests (PY3)', {
+        },
+        'Project tests (PY3)': {
             try {
                 sh "IMAGE_TAG=${commit} " +
                     "docker-compose -f docker-compose.yml -f docker-compose.ci.yml " +
@@ -45,7 +44,7 @@ elifeLibrary {
             } finally {
                 sh 'docker-compose down -v'
             }
-        }
+        }])
 
         elifeMainlineOnly {
             stage 'Push release', {
