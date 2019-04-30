@@ -27,24 +27,20 @@ elifeLibrary {
             }
         }
 
-        parallel(['Project tests (PY2)': {
-            try {
+        try {
+            parallel(['Project tests (PY2)': {
                 sh "IMAGE_TAG=${commit} " +
                     "docker-compose -f docker-compose.yml -f docker-compose.ci.yml " +
                     "run sciencebeam-utils-py2 ./project_tests.sh"
-            } finally {
-                sh 'docker-compose down -v'
-            }
-        },
-        'Project tests (PY3)': {
-            try {
+            },
+            'Project tests (PY3)': {
                 sh "IMAGE_TAG=${commit} " +
                     "docker-compose -f docker-compose.yml -f docker-compose.ci.yml " +
                     "run sciencebeam-utils-py3 ./project_tests.sh"
-            } finally {
-                sh 'docker-compose down -v'
-            }
-        }])
+            }])
+        } finally {
+            sh 'docker-compose down -v'
+        }
 
         elifeMainlineOnly {
             stage 'Push release', {
