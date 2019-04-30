@@ -5,7 +5,7 @@ from io import StringIO
 
 from backports import csv  # pylint: disable=no-name-in-module
 
-from six import string_types
+from six import string_types, text_type
 
 import apache_beam as beam
 from apache_beam.io.textio import WriteToText
@@ -35,7 +35,7 @@ def DictToList(fields):
 def format_csv_rows(rows, delimiter=','):
     get_logger().debug('format_csv_rows, rows: %s', rows)
     out = StringIO()
-    writer = csv.writer(out, delimiter=delimiter)
+    writer = csv.writer(out, delimiter=text_type(delimiter))
     writer.writerows([
         [
             x if isinstance(x, string_types) else x.decode('utf-8')
@@ -143,7 +143,7 @@ class CsvFileSource(FileBasedSource):
         headers = None
         self._file = self.open_file(file_name)
 
-        reader = csv.reader(ReadLineIterator(self._file), delimiter=self.delimiter)
+        reader = csv.reader(ReadLineIterator(self._file), delimiter=text_type(self.delimiter))
 
         line_no = 0
         for i, row in enumerate(reader):

@@ -6,6 +6,8 @@ from itertools import islice
 
 from backports import csv  # pylint: disable=no-name-in-module
 
+from six import text_type
+
 from apache_beam.io.filesystems import FileSystems
 
 from sciencebeam_utils.utils.csv import (
@@ -38,7 +40,7 @@ def load_plain_file_list(file_list_path, limit=None):
 def load_csv_or_tsv_file_list(file_list_path, column, header=True, limit=None):
     delimiter = csv_delimiter_by_filename(file_list_path)
     with open_file(file_list_path, 'r') as f:
-        reader = csv.reader(f, delimiter=delimiter)
+        reader = csv.reader(f, delimiter=text_type(delimiter))
         if not header:
             assert isinstance(column, int)
             column_index = column
