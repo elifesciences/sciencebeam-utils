@@ -3,6 +3,8 @@ import logging
 
 from backports import csv  # pylint: disable=no-name-in-module
 
+from six import text_type
+
 from sciencebeam_utils.utils.csv import (
     csv_delimiter_by_filename,
     write_csv_rows
@@ -67,7 +69,7 @@ def save_file_pairs_to_csv(output_path, source_xml_pairs):
     delimiter = csv_delimiter_by_filename(output_path)
     mime_type = 'text/tsv' if delimiter == '\t' else 'text/csv'
     with open_file(output_path, 'w', mime_type=mime_type) as f:
-        writer = csv.writer(f, delimiter=delimiter)
+        writer = csv.writer(f, delimiter=text_type(delimiter))
         write_csv_rows(writer, [['source_url', 'xml_url']])
         write_csv_rows(writer, source_xml_pairs)
     LOGGER.info('written results to %s', output_path)

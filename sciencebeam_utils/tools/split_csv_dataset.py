@@ -9,6 +9,7 @@ from typing import List
 
 from backports import csv  # pylint: disable=no-name-in-module
 
+from six import text_type
 
 from sciencebeam_utils.beam_utils.io import open_file
 
@@ -186,7 +187,7 @@ def process_args(args):
 
 def read_csv_with_header(input_filename, delimiter, no_header):
     with open_file(input_filename, 'r') as f:
-        reader = csv.reader(f, delimiter=delimiter)
+        reader = csv.reader(f, delimiter=text_type(delimiter))
         header_row = None if no_header else next(reader)
         data_rows = list(reader)
         return header_row, data_rows
@@ -216,7 +217,7 @@ def load_file_sets_or_none(filenames, delimiter, no_header):
 def save_file_set(output_filename, delimiter, header_row, set_data_rows):
     mime_type = 'text/tsv' if delimiter == '\t' else 'text/csv'
     with open_file(output_filename, 'w', mime_type=mime_type) as f:
-        writer = csv.writer(f, delimiter=delimiter)
+        writer = csv.writer(f, delimiter=text_type(delimiter))
         if header_row:
             write_csv_rows(writer, [header_row])
         write_csv_rows(writer, set_data_rows)
