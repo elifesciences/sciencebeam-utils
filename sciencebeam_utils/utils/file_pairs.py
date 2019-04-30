@@ -1,6 +1,6 @@
 import logging
 import os
-from functools import reduce  # pytest: disable=redefined-builtin
+from functools import reduce  # pylint: disable=redefined-builtin
 
 from apache_beam.io.filesystems import FileSystems
 
