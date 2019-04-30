@@ -111,11 +111,11 @@ class MockWriteToText(beam.PTransform):
             assert self.filename
             self.file_obj = BytesIO()
             if self.header:
-                self.file_obj.write(self.coder.encode(self.header) + '\n')
+                self.file_obj.write(self.coder.encode(self.header) + b'\n')
 
         def process(self, element):  # pylint: disable=arguments-differ
             assert self.file_obj
-            self.file_obj.write(self.coder.encode(element) + '\n')
+            self.file_obj.write(self.coder.encode(element) + b'\n')
 
         def finish_bundle(self):
             assert self.file_obj
@@ -183,7 +183,7 @@ class MockFileSystem(AbstractFileSystem):
     def match(self, patterns, limits=None):
         test_context = get_current_test_context()
         file_content_map = test_context.file_content_map
-        all_files = file_content_map.keys()
+        all_files = list(file_content_map.keys())
         if limits is None:
             limits = [None] * len(patterns)
         results = []

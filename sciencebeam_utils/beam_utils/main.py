@@ -137,7 +137,7 @@ def process_cloud_args(parsed_args, output_path, name=None):
         }
 
     get_logger().info('default_values: %s', default_values)
-    for kk, vv in default_values.iteritems():
+    for kk, vv in default_values.items():
         if kk not in parsed_args or not vars(parsed_args)[kk]:
             vars(parsed_args)[kk] = vv
 

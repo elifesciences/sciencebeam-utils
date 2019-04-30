@@ -1,5 +1,4 @@
 import argparse
-import csv
 import logging
 import errno
 from math import trunc
@@ -8,7 +7,11 @@ from datetime import datetime
 from itertools import chain
 from typing import List
 
-from apache_beam.io.filesystems import FileSystems
+from backports import csv  # pylint: disable=no-name-in-module
+
+from six import text_type
+
+from sciencebeam_utils.beam_utils.io import open_file
 
 from sciencebeam_utils.utils.csv import (
     csv_delimiter_by_filename,
@@ -42,7 +45,7 @@ def extract_proportions_from_args(args):
             ('test', args.test),
             ('validation', args.validation)
         ]
-        if p > 0
+        if p and p > 0
     ]
     if sum(p for _, p in proportions) > 1.0:
         raise ValueError('proportions add up to more than 1.0')
@@ -183,8 +186,8 @@ def process_args(args):
 
 
 def read_csv_with_header(input_filename, delimiter, no_header):
-    with FileSystems.open(input_filename) as f:
-        reader = csv.reader(f, delimiter=delimiter)
+    with open_file(input_filename, 'r') as f:
+        reader = csv.reader(f, delimiter=text_type(delimiter))
         header_row = None if no_header else next(reader)
         data_rows = list(reader)
         return header_row, data_rows
@@ -213,8 +216,8 @@ def load_file_sets_or_none(filenames, delimiter, no_header):
 
 def save_file_set(output_filename, delimiter, header_row, set_data_rows):
     mime_type = 'text/tsv' if delimiter == '\t' else 'text/csv'
-    with FileSystems.create(output_filename, mime_type=mime_type) as f:
-        writer = csv.writer(f, delimiter=delimiter)
+    with open_file(output_filename, 'w', mime_type=mime_type) as f:
+        writer = csv.writer(f, delimiter=text_type(delimiter))
         if header_row:
             write_csv_rows(writer, [header_row])
         write_csv_rows(writer, set_data_rows)
@@ -231,6 +234,7 @@ def get_backup_file_suffix():
 
 
 def run(args):
+    LOGGER.debug('args: %s', args)
     process_args(args)
     ext = get_ext(args.input)
     proportions = extract_proportions_from_args(args)

@@ -6,7 +6,7 @@ Provides utility functions to ScienceBeam projects.
 
 ## Pre-requisites
 
-- Python 2.7 ([currently Apache Beam doesn't support Python 3](https://issues.apache.org/jira/browse/BEAM-1373))
+- Python 2.7 or 3 (Apache Beam may not fully support Python 3 yet)
 - [Apache Beam](https://beam.apache.org/)
 - [Docker](https://www.docker.com/) and [Docker Compose](https://docs.docker.com/compose/)
 
