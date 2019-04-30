@@ -72,7 +72,7 @@ class TestLoadPlainFileList(object):
 
     def test_should_read_unicode_file(self):
         with NamedTemporaryFile('w') as f:
-            f.write('\n'.join([UNICODE_FILE_1]))
+            f.write('\n'.join([UNICODE_FILE_1]).encode('utf-8'))
             f.flush()
             assert load_plain_file_list(f.name) == [UNICODE_FILE_1]
 
@@ -103,8 +103,8 @@ class TestLoadCsvOrTsvFileList(object):
             assert load_csv_or_tsv_file_list(f.name, 0, header=False) == [FILE_1, FILE_2]
 
     def test_should_read_unicode_file(self):
-        with NamedTemporaryFile('w') as f:
-            f.write('\n'.join(['url', UNICODE_FILE_1]))
+        with NamedTemporaryFile('wb') as f:
+            f.write('\n'.join(['url', UNICODE_FILE_1]).encode('utf-8'))
             f.flush()
             assert load_csv_or_tsv_file_list(f.name, 'url') == [UNICODE_FILE_1]
 
