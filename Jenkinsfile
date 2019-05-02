@@ -10,7 +10,15 @@ elifeLibrary {
 
         stage 'Build images', {
             checkout scm
-            dockerComposeBuild(commit)
+            def version 
+            if (env.TAG_NAME) {
+                version = env.TAG_NAME - 'v'
+            } else {
+                version = 'develop'
+            }
+            withEnv(["VERSION=${version}"]) {
+                dockerComposeBuild(commit)
+            }
             try {
                 candidateVersion = sh(
                     script: (

@@ -1,1 +1,2 @@
-__version__ = '0.0.1'
+# TODO: read a separate, optional file?
+__version__ = 'develop'
