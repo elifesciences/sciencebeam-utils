@@ -1,17 +1,24 @@
 elifeLibrary {
-    def isNew
     def candidateVersion
     def commit
 
-    stage 'Checkout', {
-        checkout scm
-        commit = elifeGitRevision()
-    }
-
     node('containers-jenkins-plugin') {
+        stage 'Checkout', {
+            checkout scm
+            commit = elifeGitRevision()
+        }
+
         stage 'Build images', {
             checkout scm
-            dockerComposeBuild(commit)
+            def version 
+            if (env.TAG_NAME) {
+                version = env.TAG_NAME - 'v'
+            } else {
+                version = 'develop'
+            }
+            withEnv(["VERSION=${version}"]) {
+                dockerComposeBuild(commit)
+            }
             try {
                 candidateVersion = sh(
                     script: (
@@ -49,23 +56,16 @@ elifeLibrary {
         }
 
         elifeMainlineOnly {
-            stage 'Push release', {
-                isNew = sh(script: "git tag | grep v${candidateVersion}", returnStatus: true) != 0
-                if (isNew) {
-                    sh "IMAGE_TAG=${commit} " +
-                        "docker-compose -f docker-compose.yml -f docker-compose.ci.yml run " +
-                        "sciencebeam-utils-py2 twine upload dist/*"
-                }
+            stage 'Merge to master', {
+                elifeGitMoveToBranch commit, 'master'
             }
         }
 
-    }
-
-    elifeMainlineOnly {
-        stage 'Merge to master', {
-            elifeGitMoveToBranch commit, 'master'
-            if (isNew) {
-                sh "git tag v${candidateVersion} && git push origin v${candidateVersion}"
+        elifeTagOnly { tag ->
+            stage 'Push release', {
+                sh "IMAGE_TAG=${commit} " +
+                    "docker-compose -f docker-compose.yml -f docker-compose.ci.yml run " +
+                    "sciencebeam-utils-py2 twine upload dist/*"
             }
         }
     }
