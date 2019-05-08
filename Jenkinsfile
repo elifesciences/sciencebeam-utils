@@ -7,7 +7,7 @@ def jsonToPypirc(String jsonText, String sectionName) {
     return "[${sectionName}]\nusername=${credentials.username}\npassword=${credentials.password}"
 }
 
-@@NonCPS
+@NonCPS
 def withPypiCredentials(String env, String sectionName, doSomething) {
     try {
         new java.io.File('.pypirc').write jsonToPypirc(sh(
