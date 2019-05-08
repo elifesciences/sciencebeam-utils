@@ -1,4 +1,3 @@
-import java.io.File
 import groovy.json.JsonSlurper
 
 @NonCPS
@@ -10,7 +9,7 @@ def jsonToPypirc(String jsonText, String sectionName) {
 
 def withPypiCredentials(String env, String sectionName, doSomething) {
     try {
-        File('.pypirc').write jsonToPypirc(sh(
+        new java.io.File('.pypirc').write jsonToPypirc(sh(
             script: "vault.sh kv get -format=json secret/containers/pypi/${env} | jq .data.data",
             returnStdout: true
         ).trim(), sectionName)
