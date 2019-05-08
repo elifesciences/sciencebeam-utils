@@ -10,10 +10,10 @@ def jsonToPypirc(String jsonText, String sectionName) {
 @NonCPS
 def withPypiCredentials(String env, String sectionName, doSomething) {
     try {
-        new File('.pypirc').write jsonToPypirc(sh(
+        writeFile(file: '.pypirc', text: jsonToPypirc(sh(
             script: "vault.sh kv get -format=json secret/containers/pypi/${env} | jq .data.data",
             returnStdout: true
-        ).trim(), sectionName)
+        ).trim(), sectionName))
         doSomething()
     } finally {
         sh 'echo > .pypirc'
