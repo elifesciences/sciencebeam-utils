@@ -10,6 +10,25 @@ elifePipeline {
             commit = elifeGitRevision()
         }
 
+        stage 'Test release', {
+            try {
+                def credentials = new JsonSlurper().parseText(sh(
+                    script: 'vault.sh kv get -format=json secret/containers/pypi/staging | jq .data.data',
+                    returnStdout: true
+                ).trim())
+                // sh 'ls -l .pypirc.credentials'
+                // def credentials = new JsonSlurper().parseFile('.pypirc.credentials')
+                echo "Username: ${credentials.username}"
+                // {
+                //   "password": "...",
+                //   "username": "..."
+                // }
+                // do push to test.pypi.org
+            } finally {
+                sh 'echo > .pypirc.credentials'
+            }
+        }
+
         stage 'Build images', {
             checkout scm
             def version 
@@ -54,25 +73,6 @@ elifePipeline {
                 }])
             } finally {
                 sh 'docker-compose down -v'
-            }
-        }
-
-        stage 'Test release', {
-            try {
-                def credentials = new JsonSlurper().parseText(sh(
-                    script: 'vault.sh kv get -format=json secret/containers/pypi/staging | jq .data.data',
-                    returnStdout: true
-                ).trim())
-                // sh 'ls -l .pypirc.credentials'
-                // def credentials = new JsonSlurper().parseFile('.pypirc.credentials')
-                echo "Username: ${credentials.username}"
-                // {
-                //   "password": "...",
-                //   "username": "..."
-                // }
-                // do push to test.pypi.org
-            } finally {
-                sh 'echo > .pypirc.credentials'
             }
         }
 
