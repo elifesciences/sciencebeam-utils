@@ -57,8 +57,12 @@ elifePipeline {
 
         stage 'Test release', {
             try {
-                sh 'vault.sh kv get -field credentials secret/containers/pypi/staging > .pypirc.credentials'
+                sh 'vault.sh kv get -format=json secret/containers/pypi/staging | jq .data.data > .pypirc.credentials'
                 sh 'ls -l .pypirc.credentials'
+                // {
+                //   "password": "...",
+                //   "username": "..."
+                // }
                 // do push to test.pypi.org
             } finally {
                 sh 'echo > .pypirc.credentials'
@@ -74,7 +78,7 @@ elifePipeline {
         elifeTagOnly { tag ->
             stage 'Push release', {
                 try {
-                    sh 'vault.sh kv get -field credentials secret/containers/pypi/prod > .pypirc.credentials'
+                    sh 'vault.sh kv get -format json secret/containers/pypi/prod | jq .data.data > .pypirc.credentials'
                     sh "IMAGE_TAG=${commit} " +
                         "docker-compose -f docker-compose.yml -f docker-compose.ci.yml run " +
                         "sciencebeam-utils-py2 twine upload dist/*"
