@@ -59,6 +59,8 @@ elifePipeline {
             try {
                 sh 'vault.sh kv get -format=json secret/containers/pypi/staging | jq .data.data > .pypirc.credentials'
                 sh 'ls -l .pypirc.credentials'
+                def credentials = new JsonSlurper().parseFile('.pypirc.credentials')
+                echo "Username: ${credentials.username}"
                 // {
                 //   "password": "...",
                 //   "username": "..."
