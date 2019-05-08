@@ -5,7 +5,7 @@ def jsonToPypirc(String jsonText) {
     def credentials = new JsonSlurper().parseText(jsonText)
     echo "Username: ${credentials.username}"
     return "dummy"
-
+}
 
 elifePipeline {
     def candidateVersion
