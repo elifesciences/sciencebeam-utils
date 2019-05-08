@@ -36,7 +36,7 @@ elifePipeline {
                 try {
                     sh "IMAGE_TAG=${commit} " +
                         "docker-compose -f docker-compose.yml -f docker-compose.ci.yml run " +
-                        "-v ./.pypirc:/root/.pypirc " +
+                        "-v \$PWD/.pypirc:/root/.pypirc " +
                         "sciencebeam-utils-py2 twine upload --repository-url https://test.pypi.org/legacy/ dist/*"
                 } finally {
                     sh 'docker-compose down -v'
