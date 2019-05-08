@@ -30,7 +30,7 @@ elifePipeline {
         }
 
         stage 'Test release', {
-            withPypiCredentials 'staging', 'pypitest', {
+            withPypiCredentials 'staging', 'testpypi', {
                 echo 'should have credentials?'
                 sh 'ls -l .pypirc'
                 try {
@@ -39,8 +39,7 @@ elifePipeline {
                         "-v \$PWD/.pypirc:/root/.pypirc " +
                         "sciencebeam-utils-py2 twine upload " +
                         "--config-file /root/.pypirc " +
-                        "--repository pypitest " +
-                        "--repository-url https://test.pypi.org/legacy/ dist/*"
+                        "--repository testpypi " +
                 } finally {
                     sh 'docker-compose down -v'
                 }
