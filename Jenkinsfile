@@ -4,7 +4,7 @@ import groovy.json.JsonSlurper
 def jsonToPypirc(String jsonText, String sectionName) {
     def credentials = new JsonSlurper().parseText(jsonText)
     echo "Username: ${credentials.username}"
-    return "[${sectionName}]\nusername=${credentials.username}\npassword=${credentials.password}"
+    return "[${sectionName}]\nusername: ${credentials.username}\npassword: ${credentials.password}"
 }
 
 def withPypiCredentials(String env, String sectionName, doSomething) {
