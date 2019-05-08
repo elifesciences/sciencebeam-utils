@@ -1,3 +1,5 @@
+import groovy.json.JsonSlurper
+
 elifePipeline {
     def candidateVersion
     def commit
