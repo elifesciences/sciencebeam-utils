@@ -30,7 +30,7 @@ elifePipeline {
         }
 
         stage 'Test release', {
-            withPypiCredentials 'staging', 'pypitest' {
+            withPypiCredentials 'staging', 'pypitest', {
                 sh 'ls -l .pypirc'
             }
             // try {
