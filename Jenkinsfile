@@ -32,6 +32,7 @@ elifePipeline {
 
         stage 'Test release', {
             withPypiCredentials 'staging', 'pypitest', {
+                echo 'should have credentials?'
                 sh 'ls -l .pypirc'
             }
             // try {
