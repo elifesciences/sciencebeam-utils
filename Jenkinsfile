@@ -1,5 +1,12 @@
 import groovy.json.JsonSlurper
 
+@NonCPS
+def jsonToPypirc(String jsonText) {
+    def credentials = new JsonSlurper().parseText(jsonText)
+    echo "Username: ${credentials.username}"
+    return "dummy"
+
+
 elifePipeline {
     def candidateVersion
     def commit
@@ -13,7 +20,7 @@ elifePipeline {
         stage 'Test release', {
             try {
                 echo "Reading credentials"
-                def credentials = new JsonSlurper().parseText(sh(
+                def pypirc = jsonToPypirc(sh(
                     script: 'vault.sh kv get -format=json secret/containers/pypi/staging | jq .data.data',
                     returnStdout: true
                 ).trim())
