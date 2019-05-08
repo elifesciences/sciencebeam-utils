@@ -7,6 +7,18 @@ def jsonToPypirc(String jsonText, String sectionName) {
     return "[${sectionName}]\nusername=${credentials.username}\npassword=${credentials.password}"
 }
 
+def withPypiCredentials(String env, String sectionName, doSomething) {
+    try {
+        File('.pypirc').write jsonToPypirc(sh(
+            script: "vault.sh kv get -format=json secret/containers/pypi/${env} | jq .data.data",
+            returnStdout: true
+        ).trim(), sectionName)
+        doSomething()
+    } finally {
+        sh 'echo > .pypirc'
+    }
+}
+
 elifePipeline {
     def candidateVersion
     def commit
@@ -18,24 +30,27 @@ elifePipeline {
         }
 
         stage 'Test release', {
-            try {
-                echo "Reading credentials"
-                def pypirc = jsonToPypirc(sh(
-                    script: 'vault.sh kv get -format=json secret/containers/pypi/staging | jq .data.data',
-                    returnStdout: true
-                ).trim(), "pypitest")
-                // sh 'ls -l .pypirc.credentials'
-                // def credentials = new JsonSlurper().parseFile('.pypirc.credentials')
-                echo "Read credentials"
-                // echo "Username: ${credentials.username}"
-                // {
-                //   "password": "...",
-                //   "username": "..."
-                // }
-                // do push to test.pypi.org
-            } finally {
-                sh 'echo > .pypirc.credentials'
+            withPypiCredentials 'staging', 'pypitest' {
+                sh 'ls -l .pypirc'
             }
+            // try {
+            //     echo "Reading credentials"
+            //     def pypirc = jsonToPypirc(sh(
+            //         script: 'vault.sh kv get -format=json secret/containers/pypi/staging | jq .data.data',
+            //         returnStdout: true
+            //     ).trim(), "pypitest")
+            //     // sh 'ls -l .pypirc.credentials'
+            //     // def credentials = new JsonSlurper().parseFile('.pypirc.credentials')
+            //     echo "Read credentials"
+            //     // echo "Username: ${credentials.username}"
+            //     // {
+            //     //   "password": "...",
+            //     //   "username": "..."
+            //     // }
+            //     // do push to test.pypi.org
+            // } finally {
+            //     sh 'echo > .pypirc.credentials'
+            // }
         }
 
         stage 'Build images', {
