@@ -39,7 +39,7 @@ elifePipeline {
                         "-v \$PWD/.pypirc:/root/.pypirc " +
                         "sciencebeam-utils-py2 twine upload " +
                         "--config-file /root/.pypirc " +
-                        "--repository pypitest " +
+                        "--repository testpypi " +
                         "dist/*"
                 } finally {
                     sh 'docker-compose down -v'
