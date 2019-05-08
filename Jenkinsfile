@@ -59,9 +59,12 @@ elifePipeline {
 
         stage 'Test release', {
             try {
-                sh 'vault.sh kv get -format=json secret/containers/pypi/staging | jq .data.data > .pypirc.credentials'
-                sh 'ls -l .pypirc.credentials'
-                def credentials = new JsonSlurper().parseFile('.pypirc.credentials')
+                def credentials = new JsonSlurper().parseText(sh(
+                    script: 'vault.sh kv get -format=json secret/containers/pypi/staging | jq .data.data',
+                    returnStdout: true
+                ).trim())
+                // sh 'ls -l .pypirc.credentials'
+                // def credentials = new JsonSlurper().parseFile('.pypirc.credentials')
                 echo "Username: ${credentials.username}"
                 // {
                 //   "password": "...",
