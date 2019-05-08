@@ -1,10 +1,10 @@
 import groovy.json.JsonSlurper
 
 @NonCPS
-def jsonToPypirc(String jsonText) {
+def jsonToPypirc(String jsonText, String sectionName) {
     def credentials = new JsonSlurper().parseText(jsonText)
     echo "Username: ${credentials.username}"
-    return "dummy"
+    return "[${sectionName}]\nusername=${credentials.username}\npassword=${credentials.password}"
 }
 
 elifePipeline {
@@ -23,7 +23,7 @@ elifePipeline {
                 def pypirc = jsonToPypirc(sh(
                     script: 'vault.sh kv get -format=json secret/containers/pypi/staging | jq .data.data',
                     returnStdout: true
-                ).trim())
+                ).trim(), "pypitest")
                 // sh 'ls -l .pypirc.credentials'
                 // def credentials = new JsonSlurper().parseFile('.pypirc.credentials')
                 echo "Read credentials"
