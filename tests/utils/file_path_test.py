@@ -1,6 +1,6 @@
 import pytest
 
-from .file_path import (
+from sciencebeam_utils.utils.file_path import (
     relative_path,
     join_if_relative_path,
     change_ext,

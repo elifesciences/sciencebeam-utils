@@ -4,8 +4,8 @@ from mock import patch
 
 import pytest
 
-from . import find_file_pairs as find_file_pairs
-from .find_file_pairs import (
+from sciencebeam_utils.tools import find_file_pairs as find_file_pairs
+from sciencebeam_utils.tools.find_file_pairs import (
     to_relative_file_pairs,
     run,
     parse_args,

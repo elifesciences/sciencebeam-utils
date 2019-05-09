@@ -3,8 +3,8 @@ from mock import patch, ANY
 
 import pytest
 
-from . import get_output_files as get_output_files
-from .get_output_files import (
+from sciencebeam_utils.tools import get_output_files as get_output_files
+from sciencebeam_utils.tools.get_output_files import (
     get_output_file_list,
     run,
     parse_args,
