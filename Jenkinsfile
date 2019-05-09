@@ -30,12 +30,6 @@ elifePipeline {
             commit = elifeGitRevision()
         }
 
-        stage 'Test release', {
-            withPypiCredentials 'staging', 'testpypi', {
-                sh "make IMAGE_TAG=${commit} COMMIT=${commit} ci-build-py2 ci-push-testpypi"
-            }
-        }
-
         stage 'Build images', {
             checkout scm
             if (env.TAG_NAME) {
@@ -81,6 +75,12 @@ elifePipeline {
         elifeMainlineOnly {
             stage 'Merge to master', {
                 elifeGitMoveToBranch commit, 'master'
+            }
+        }
+
+        stage 'Test release', {
+            withPypiCredentials 'staging', 'testpypi', {
+                sh "make IMAGE_TAG=${commit} COMMIT=${commit} ci-push-testpypi"
             }
         }
 
