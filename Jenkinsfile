@@ -78,7 +78,7 @@ elifePipeline {
         }
 
         elifePullRequestOnly { prNumber ->
-            stage 'Test release', {
+            stage 'Push package to test.pypi.org', {
                 withPypiCredentials 'staging', 'testpypi', {
                     sh "make IMAGE_TAG=${commit} COMMIT=${commit} ci-push-testpypi"
                 }
