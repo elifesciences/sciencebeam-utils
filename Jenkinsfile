@@ -20,11 +20,11 @@ def withPypiCredentials(String env, String sectionName, doSomething) {
 }
 
 elifePipeline {
-    def candidateVersion
-    def commit
-    def version 
-
     node('containers-jenkins-plugin') {
+        def candidateVersion
+        def commit
+        def version
+
         stage 'Checkout', {
             checkout scm
             commit = elifeGitRevision()
