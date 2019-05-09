@@ -21,7 +21,6 @@ def withPypiCredentials(String env, String sectionName, doSomething) {
 
 elifePipeline {
     node('containers-jenkins-plugin') {
-        def candidateVersion
         def commit
         def version
 
@@ -41,7 +40,7 @@ elifePipeline {
                 dockerComposeBuild(commit)
             }
             try {
-                candidateVersion = sh(
+                def actualVersion = sh(
                     script: (
                         "IMAGE_TAG=${commit} " +
                         "docker-compose -f docker-compose.yml -f docker-compose.ci.yml run " +
@@ -49,7 +48,7 @@ elifePipeline {
                     ),
                     returnStdout: true
                 ).trim()
-                echo "Candidate version: v${candidateVersion}"
+                echo "Actual version: v${actualVersion}"
             } finally {
                 sh 'docker-compose down -v'
             }
