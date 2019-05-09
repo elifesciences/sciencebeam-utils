@@ -5,7 +5,7 @@ from io import StringIO
 
 from backports import csv  # pylint: disable=no-name-in-module
 
-from six import string_types, text_type
+from six import text_type
 
 import apache_beam as beam
 from apache_beam.io.textio import WriteToText
