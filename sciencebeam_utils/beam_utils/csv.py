@@ -32,15 +32,19 @@ def DictToList(fields):
     return wrapper
 
 
+def _to_text(value):
+    try:
+        return text_type(value, encoding='utf-8')
+    except TypeError:
+        return text_type(value)
+
+
 def format_csv_rows(rows, delimiter=','):
     get_logger().debug('format_csv_rows, rows: %s', rows)
     out = StringIO()
     writer = csv.writer(out, delimiter=text_type(delimiter))
     writer.writerows([
-        [
-            x if isinstance(x, string_types) else x.decode('utf-8')
-            for x in row
-        ]
+        [_to_text(x) for x in row]
         for row in rows
     ])
     result = out.getvalue().rstrip('\r\n')
