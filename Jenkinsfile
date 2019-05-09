@@ -19,24 +19,6 @@ def withPypiCredentials(String env, String sectionName, doSomething) {
     }
 }
 
-def pushToPypi(String env, String sectionName, String commit) {
-    withPypiCredentials env, sectionName, {
-        sh 'ls -l .pypirc'
-        try {
-            sh "IMAGE_TAG=${commit} " +
-                "docker-compose -f docker-compose.yml -f docker-compose.ci.yml run " +
-                "-v \$PWD/.pypirc:/root/.pypirc " +
-                "sciencebeam-utils-py2 twine upload " +
-                "--config-file /root/.pypirc " +
-                "--repository testpypi " +
-                "--verbose " +
-                "dist/*"
-        } finally {
-            sh 'docker-compose down -v'
-        }
-    }
-}
-
 elifePipeline {
     def candidateVersion
     def commit
@@ -48,7 +30,9 @@ elifePipeline {
         }
 
         stage 'Test release', {
-            pushToPypi 'staging', 'testpypi', commit
+            withPypiCredentials 'staging', 'testpypi', {
+                sh "make IMAGE_TAG=${commit} COMMIT=${commit} ci-build-py2 ci-push-testpypi"
+            }
         }
 
         stage 'Build images', {

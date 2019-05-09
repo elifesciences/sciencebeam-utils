@@ -1,6 +1,12 @@
+DOCKER_COMPOSE_DEV = docker-compose
+DOCKER_COMPOSE_CI = docker-compose -f docker-compose.yml -f docker-compose.ci.yml
+DOCKER_COMPOSE = $(DOCKER_COMPOSE_DEV)
+
 RUN_PY2 = docker-compose run --rm sciencebeam-utils-py2
 RUN_PY3 = docker-compose run --rm sciencebeam-utils-py3
 PYTEST_ARGS =
+
+COMMIT =
 
 
 dev-venv:
@@ -50,4 +56,24 @@ watch-py3: build-py3 delete-pyc
 	$(RUN_PY3) pytest-watch -- $(PYTEST_ARGS)
 
 
-watch: watch-py2
+ci-build-py2:
+	make DOCKER_COMPOSE="$(DOCKER_COMPOSE_CI)" build-py2
+
+
+ci-build-py3:
+	make DOCKER_COMPOSE="$(DOCKER_COMPOSE_CI)" build-py2
+
+
+ci-test-py2:
+	make DOCKER_COMPOSE="$(DOCKER_COMPOSE_CI)" test-py2
+
+
+ci-test-py3:
+	make DOCKER_COMPOSE="$(DOCKER_COMPOSE_CI)" test-py2
+
+
+ci-push-testpypi:
+	$(DOCKER_COMPOSE_CI) run --rm \
+		-v $$PWD/.pypirc:/root/.pypirc \
+		sciencebeam-utils-py2 \
+		./docker/push-testpypi-commit-version.sh "$(COMMIT)"

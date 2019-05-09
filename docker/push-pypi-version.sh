@@ -14,4 +14,6 @@ echo "version=${version}, repository=${repository}"
 
 cat sciencebeam_utils/__init__.py
 
+ls -l $HOME/.pypirc
+
 twine upload --repository "${repository}" --verbose "dist/sciencebeam_utils-${version}"*
