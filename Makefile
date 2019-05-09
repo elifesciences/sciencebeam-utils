@@ -2,12 +2,13 @@ DOCKER_COMPOSE_DEV = docker-compose
 DOCKER_COMPOSE_CI = docker-compose -f docker-compose.yml -f docker-compose.ci.yml
 DOCKER_COMPOSE = $(DOCKER_COMPOSE_DEV)
 
-RUN_PY2 = docker-compose run --rm sciencebeam-utils-py2
-RUN_PY3 = docker-compose run --rm sciencebeam-utils-py3
+RUN_PY2 = $(DOCKER_COMPOSE) run --rm sciencebeam-utils-py2
+RUN_PY3 = $(DOCKER_COMPOSE) run --rm sciencebeam-utils-py3
 PYTEST_ARGS =
 
 COMMIT =
 VERSION =
+NO_BUILD =
 
 
 dev-venv:
@@ -23,15 +24,21 @@ dev-venv:
 
 
 build-all:
-	docker-compose build --parallel
+	if [ "$(NO_BUILD)" != "y" ]; then \
+		$(DOCKER_COMPOSE) build --parallel \
+	fi
 
 
 build-py2:
-	docker-compose build sciencebeam-utils-py2
+	if [ "$(NO_BUILD)" != "y" ]; then \
+		$(DOCKER_COMPOSE) build sciencebeam-utils-py2; \
+	fi
 
 
 build-py3:
-	docker-compose build sciencebeam-utils-py3
+	if [ "$(NO_BUILD)" != "y" ]; then \
+		$(DOCKER_COMPOSE) build sciencebeam-utils-py3; \
+	fi
 
 
 delete-pyc:

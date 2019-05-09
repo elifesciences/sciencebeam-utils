@@ -58,12 +58,12 @@ elifePipeline {
             try {
                 parallel(['Project tests (PY2)': {
                     withCommitStatus({
-                        sh "make IMAGE_TAG=${commit} ci-test-py2"
+                        sh "make IMAGE_TAG=${commit} NO_BUILD=y ci-test-py2"
                     }, 'project-tests/py2', commit)
                 },
                 'Project tests (PY3)': {
                     withCommitStatus({
-                        sh "make IMAGE_TAG=${commit} ci-test-py3"
+                        sh "make IMAGE_TAG=${commit} NO_BUILD=y ci-test-py3"
                     }, 'project-tests/py3', commit)
                 }])
             } finally {
@@ -80,7 +80,7 @@ elifePipeline {
         elifePullRequestOnly { prNumber ->
             stage 'Push package to test.pypi.org', {
                 withPypiCredentials 'staging', 'testpypi', {
-                    sh "make IMAGE_TAG=${commit} COMMIT=${commit} ci-push-testpypi"
+                    sh "make IMAGE_TAG=${commit} COMMIT=${commit} NO_BUILD=y ci-push-testpypi"
                 }
             }
         }
@@ -88,7 +88,7 @@ elifePipeline {
         elifeTagOnly { tag ->
             stage 'Push release', {
                 withPypiCredentials 'prod', 'pypi', {
-                    sh "make IMAGE_TAG=${commit} VERSION=${version} ci-push-pypi"
+                    sh "make IMAGE_TAG=${commit} VERSION=${version} NO_BUILD=y ci-push-pypi"
                 }
             }
         }
