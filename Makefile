@@ -62,7 +62,7 @@ ci-build-py2:
 
 
 ci-build-py3:
-	make DOCKER_COMPOSE="$(DOCKER_COMPOSE_CI)" build-py2
+	make DOCKER_COMPOSE="$(DOCKER_COMPOSE_CI)" build-py3
 
 
 ci-test-py2:
@@ -70,7 +70,7 @@ ci-test-py2:
 
 
 ci-test-py3:
-	make DOCKER_COMPOSE="$(DOCKER_COMPOSE_CI)" test-py2
+	make DOCKER_COMPOSE="$(DOCKER_COMPOSE_CI)" test-py3
 
 
 ci-push-testpypi:
