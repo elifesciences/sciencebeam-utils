@@ -6,7 +6,13 @@ import sciencebeam_utils
 with open('requirements.txt', 'r') as f:
     REQUIRED_PACKAGES = f.readlines()
 
+
+with open('README.md', encoding='utf-8') as f:
+    long_description = f.read()
+
+
 packages = find_packages()
+
 
 setup(
     name='sciencebeam_utils',
@@ -17,4 +23,6 @@ setup(
     packages=packages,
     include_package_data=True,
     description='ScienceBeam Utils',
+    long_description=long_description,
+    long_description_content_type='text/markdown'
 )
