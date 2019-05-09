@@ -22,6 +22,7 @@ def withPypiCredentials(String env, String sectionName, doSomething) {
 elifePipeline {
     def candidateVersion
     def commit
+    def version 
 
     node('containers-jenkins-plugin') {
         stage 'Checkout', {
@@ -37,7 +38,6 @@ elifePipeline {
 
         stage 'Build images', {
             checkout scm
-            def version 
             if (env.TAG_NAME) {
                 version = env.TAG_NAME - 'v'
             } else {
@@ -90,13 +90,8 @@ elifePipeline {
 
         elifeTagOnly { tag ->
             stage 'Push release', {
-                try {
-                    sh 'vault.sh kv get -format json secret/containers/pypi/prod | jq .data.data > .pypirc.credentials'
-                    sh "IMAGE_TAG=${commit} " +
-                        "docker-compose -f docker-compose.yml -f docker-compose.ci.yml run " +
-                        "sciencebeam-utils-py2 twine upload dist/*"
-                } finally {
-                    sh 'echo > .pypirc.credentials'
+                withPypiCredentials 'prod', 'pypi', {
+                    sh "make IMAGE_TAG=${commit} VERSION=${version} ci-push-pypi"
                 }
             }
         }

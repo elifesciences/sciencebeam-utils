@@ -7,6 +7,7 @@ RUN_PY3 = docker-compose run --rm sciencebeam-utils-py3
 PYTEST_ARGS =
 
 COMMIT =
+VERSION =
 
 
 dev-venv:
@@ -77,3 +78,10 @@ ci-push-testpypi:
 		-v $$PWD/.pypirc:/root/.pypirc \
 		sciencebeam-utils-py2 \
 		./docker/push-testpypi-commit-version.sh "$(COMMIT)"
+
+
+ci-push-pypi:
+	$(DOCKER_COMPOSE_CI) run --rm \
+		-v $$PWD/.pypirc:/root/.pypirc \
+		sciencebeam-utils-py2 \
+		./docker/push-pypi-version.sh "$(VERSION)"
