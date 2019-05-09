@@ -19,6 +19,24 @@ def withPypiCredentials(String env, String sectionName, doSomething) {
     }
 }
 
+def pushToPypi(String env, String sectionName, String commit) {
+    withPypiCredentials env, sectionName, {
+        sh 'ls -l .pypirc'
+        try {
+            sh "IMAGE_TAG=${commit} " +
+                "docker-compose -f docker-compose.yml -f docker-compose.ci.yml run " +
+                "-v \$PWD/.pypirc:/root/.pypirc " +
+                "sciencebeam-utils-py2 twine upload " +
+                "--config-file /root/.pypirc " +
+                "--repository testpypi " +
+                "--verbose " +
+                "dist/*"
+        } finally {
+            sh 'docker-compose down -v'
+        }
+    }
+}
+
 elifePipeline {
     def candidateVersion
     def commit
@@ -30,40 +48,7 @@ elifePipeline {
         }
 
         stage 'Test release', {
-            withPypiCredentials 'staging', 'testpypi', {
-                echo 'should have credentials?'
-                sh 'ls -l .pypirc'
-                try {
-                    sh "IMAGE_TAG=${commit} " +
-                        "docker-compose -f docker-compose.yml -f docker-compose.ci.yml run " +
-                        "-v \$PWD/.pypirc:/root/.pypirc " +
-                        "sciencebeam-utils-py2 twine upload " +
-                        "--config-file /root/.pypirc " +
-                        "--repository testpypi " +
-                        "--verbose " +
-                        "dist/*"
-                } finally {
-                    sh 'docker-compose down -v'
-                }
-            }
-            // try {
-            //     echo "Reading credentials"
-            //     def pypirc = jsonToPypirc(sh(
-            //         script: 'vault.sh kv get -format=json secret/containers/pypi/staging | jq .data.data',
-            //         returnStdout: true
-            //     ).trim(), "pypitest")
-            //     // sh 'ls -l .pypirc.credentials'
-            //     // def credentials = new JsonSlurper().parseFile('.pypirc.credentials')
-            //     echo "Read credentials"
-            //     // echo "Username: ${credentials.username}"
-            //     // {
-            //     //   "password": "...",
-            //     //   "username": "..."
-            //     // }
-            //     // do push to test.pypi.org
-            // } finally {
-            //     sh 'echo > .pypirc.credentials'
-            // }
+            pushToPypi 'staging', 'testpypi', commit
         }
 
         stage 'Build images', {
