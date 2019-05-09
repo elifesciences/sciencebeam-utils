@@ -58,12 +58,12 @@ elifePipeline {
             try {
                 parallel(['Project tests (PY2)': {
                     withCommitStatus({
-                        sh "make IMAGE_TAG=${commit} COMMIT=${commit} ci-test-py2"
+                        sh "make IMAGE_TAG=${commit} ci-test-py2"
                     }, 'project-tests/py2', commit)
                 },
                 'Project tests (PY3)': {
                     withCommitStatus({
-                        sh "make IMAGE_TAG=${commit} COMMIT=${commit} ci-test-py3"
+                        sh "make IMAGE_TAG=${commit} ci-test-py3"
                     }, 'project-tests/py3', commit)
                 }])
             } finally {
