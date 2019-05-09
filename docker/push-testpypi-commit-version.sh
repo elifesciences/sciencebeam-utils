@@ -24,4 +24,4 @@ cat sciencebeam_utils/__init__.py
 
 python setup.py sdist bdist_wheel
 
-twine upload --repository "${repository}" --verbose "dist/sciencebeam_utils-${version}"*
+$(dirname $0)/push-pypi-version.sh "${version}" "${repository}"
