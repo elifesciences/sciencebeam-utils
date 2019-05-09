@@ -38,11 +38,11 @@ delete-pyc:
 	find ./sciencebeam_utils/ -name '*.pyc' -delete
 
 
-test-py2: build-py2 delete-pyc
+test-py2: build-py2
 	$(RUN_PY2) ./project_tests.sh
 
 
-test-py3: build-py3 delete-pyc
+test-py3: build-py3
 	$(RUN_PY3) ./project_tests.sh
 
 
