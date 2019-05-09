@@ -24,6 +24,8 @@ from sciencebeam_utils.beam_utils.csv import (
 
 MODULE_UNDER_TEST = 'sciencebeam_utils.beam_utils.csv'
 
+UNICODE_STR_1 = u'file1\u1234.pdf'
+
 
 @contextmanager
 def patch_module_under_test(**kwargs):
@@ -36,6 +38,29 @@ def patch_module_under_test(**kwargs):
 
 def to_csv(rows, delimiter):
     return (format_csv_rows(rows, delimiter).replace('\r\n', '\n') + '\n').encode('utf-8')
+
+
+class TestFormatCsvRows(object):
+    def test_should_format_empty_rows(self):
+        assert format_csv_rows([]) == ''
+
+    def test_should_format_single_unicode_cell(self):
+        assert format_csv_rows([[UNICODE_STR_1]]) == UNICODE_STR_1
+
+    def test_should_format_single_byte_cell(self):
+        assert format_csv_rows([[UNICODE_STR_1.encode('utf-8')]]) == UNICODE_STR_1
+
+    def test_should_format_single_int_cell(self):
+        assert format_csv_rows([[123]]) == '123'
+
+    def test_should_format_single_string_row(self):
+        assert format_csv_rows([['abc', 'def']]) == 'abc,def'
+
+    def test_should_format_multiple_string_rows(self):
+        assert (
+            format_csv_rows([['abc', 'def'], ['123', '456']]).splitlines()
+            == ['abc,def', '123,456']
+        )
 
 
 @pytest.mark.slow
