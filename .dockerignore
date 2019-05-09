@@ -2,7 +2,6 @@
 venv
 dist
 *.egg-info
-*.md
 .travis.yml
 Jenkinsfile
 
