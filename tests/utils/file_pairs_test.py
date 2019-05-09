@@ -1,4 +1,4 @@
-from .file_pairs import group_file_pairs_by_parent_directory_or_name
+from sciencebeam_utils.utils.file_pairs import group_file_pairs_by_parent_directory_or_name
 
 
 class TestGroupFilePairsByParentDirectoryOrName(object):

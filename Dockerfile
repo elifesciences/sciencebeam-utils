@@ -19,6 +19,7 @@ COPY requirements.dev.txt ${PROJECT_HOME}/
 RUN pip install -r requirements.dev.txt
 
 COPY sciencebeam_utils ${PROJECT_HOME}/sciencebeam_utils
+COPY tests ${PROJECT_HOME}/tests
 COPY README.md *.conf *.sh *.in *.txt *.py .pylintrc .flake8 ${PROJECT_HOME}/
 
 ARG version

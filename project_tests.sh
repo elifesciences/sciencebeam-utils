@@ -10,9 +10,9 @@ pytest -p no:cacheprovider
 
 echo "running pylint"
 PYLINTHOME=/tmp/sciencebeam-utils \
-  pylint sciencebeam_utils
+  pylint sciencebeam_utils tests
 
 echo "running flake8"
-flake8 sciencebeam_utils
+flake8 sciencebeam_utils tests
 
 echo "done"

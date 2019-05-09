@@ -5,8 +5,8 @@ from mock import patch
 
 import pytest
 
-from . import split_csv_dataset as split_csv_dataset_module
-from .split_csv_dataset import (
+from sciencebeam_utils.tools import split_csv_dataset as split_csv_dataset_module
+from sciencebeam_utils.tools.split_csv_dataset import (
     extract_proportions_from_args,
     split_rows,
     output_filenames_for_names,
