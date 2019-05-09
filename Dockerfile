@@ -19,10 +19,11 @@ COPY requirements.dev.txt ${PROJECT_HOME}/
 RUN pip install -r requirements.dev.txt
 
 COPY sciencebeam_utils ${PROJECT_HOME}/sciencebeam_utils
-COPY *.conf *.sh *.in *.txt *.py .pylintrc .flake8 ${PROJECT_HOME}/
+COPY README.md *.conf *.sh *.in *.txt *.py .pylintrc .flake8 ${PROJECT_HOME}/
 
 ARG version
-RUN bash -c 'sed -i -e "s/^__version__ = .*/__version__ = \"${version}\"/g" sciencebeam_utils/__init__.py'
+ADD docker ./docker
+RUN ls -l && ./docker/set-version.sh "${version}"
 LABEL org.opencontainers.image.version=${version}
 
 RUN python setup.py sdist bdist_wheel

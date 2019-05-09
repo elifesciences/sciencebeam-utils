@@ -1,6 +1,13 @@
+DOCKER_COMPOSE_DEV = docker-compose
+DOCKER_COMPOSE_CI = docker-compose -f docker-compose.yml -f docker-compose.ci.yml
+DOCKER_COMPOSE = $(DOCKER_COMPOSE_DEV)
+
 RUN_PY2 = docker-compose run --rm sciencebeam-utils-py2
 RUN_PY3 = docker-compose run --rm sciencebeam-utils-py3
 PYTEST_ARGS =
+
+COMMIT =
+VERSION =
 
 
 dev-venv:
@@ -31,11 +38,11 @@ delete-pyc:
 	find ./sciencebeam_utils/ -name '*.pyc' -delete
 
 
-test-py2: build-py2 delete-pyc
+test-py2: build-py2
 	$(RUN_PY2) ./project_tests.sh
 
 
-test-py3: build-py3 delete-pyc
+test-py3: build-py3
 	$(RUN_PY3) ./project_tests.sh
 
 
@@ -50,4 +57,31 @@ watch-py3: build-py3 delete-pyc
 	$(RUN_PY3) pytest-watch -- $(PYTEST_ARGS)
 
 
-watch: watch-py2
+ci-build-py2:
+	make DOCKER_COMPOSE="$(DOCKER_COMPOSE_CI)" build-py2
+
+
+ci-build-py3:
+	make DOCKER_COMPOSE="$(DOCKER_COMPOSE_CI)" build-py3
+
+
+ci-test-py2:
+	make DOCKER_COMPOSE="$(DOCKER_COMPOSE_CI)" test-py2
+
+
+ci-test-py3:
+	make DOCKER_COMPOSE="$(DOCKER_COMPOSE_CI)" test-py3
+
+
+ci-push-testpypi:
+	$(DOCKER_COMPOSE_CI) run --rm \
+		-v $$PWD/.pypirc:/root/.pypirc \
+		sciencebeam-utils-py2 \
+		./docker/push-testpypi-commit-version.sh "$(COMMIT)"
+
+
+ci-push-pypi:
+	$(DOCKER_COMPOSE_CI) run --rm \
+		-v $$PWD/.pypirc:/root/.pypirc \
+		sciencebeam-utils-py2 \
+		./docker/push-pypi-version.sh "$(VERSION)"
