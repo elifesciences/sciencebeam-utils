@@ -37,7 +37,7 @@ elifePipeline {
                 version = 'develop'
             }
             withEnv(["VERSION=${version}"]) {
-                dockerComposeBuild(commit)
+                dockerComposeBuild(commit, ['parallel': true])
             }
             try {
                 def actualVersion = sh(
