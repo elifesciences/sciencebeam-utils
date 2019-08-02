@@ -3,3 +3,4 @@ backports.csv>=1.0
 lxml>=4.2.0
 numpy>=1.14.2
 six>=1.11.0
+tqdm>=4.0.0
