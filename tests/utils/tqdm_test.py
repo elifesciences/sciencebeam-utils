@@ -68,3 +68,4 @@ class TestTqdmWithLoggingRedirect(object):
             assert isinstance(logger.handlers[0], TqdmLoggingHandler)
             LOGGER.info('test')
             pbar.update(1)
+        assert not logger.handlers
