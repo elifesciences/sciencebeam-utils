@@ -42,7 +42,7 @@ def redirect_logging_to_tqdm(logger=None):
 
 @contextmanager
 def tqdm_with_logging_redirect(*args, **kwargs):
-    logger = kwargs.pop('logger')
+    logger = kwargs.pop('logger', None)
     with tqdm(*args, **kwargs) as pbar:
         with redirect_logging_to_tqdm(logger=logger):
             yield pbar

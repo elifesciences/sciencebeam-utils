@@ -4,7 +4,14 @@ import logging
 import sys
 from io import StringIO
 
-from sciencebeam_utils.utils.tqdm import redirect_logging_to_tqdm, TqdmLoggingHandler
+from sciencebeam_utils.utils.tqdm import (
+    redirect_logging_to_tqdm,
+    tqdm_with_logging_redirect,
+    TqdmLoggingHandler
+)
+
+
+LOGGER = logging.getLogger(__name__)
 
 
 class TestRedirectLoggingToTqdm(object):
@@ -34,3 +41,21 @@ class TestRedirectLoggingToTqdm(object):
             assert logger.handlers[0] == stream_handler
             assert isinstance(logger.handlers[1], TqdmLoggingHandler)
         assert logger.handlers == [stream_handler]
+
+
+class TestTqdmWithLoggingRedirect(object):
+    def test_should_add_and_remove_handler_from_root_logger_by_default(self):
+        original_handlers = list(logging.root.handlers)
+        with tqdm_with_logging_redirect(total=1) as pbar:
+            assert isinstance(logging.root.handlers[-1], TqdmLoggingHandler)
+            LOGGER.info('test')
+            pbar.update(1)
+        assert logging.root.handlers == original_handlers
+
+    def test_should_add_and_remove_handler_from_custom_logger(self):
+        logger = logging.Logger('test')
+        with tqdm_with_logging_redirect(total=1, logger=logger) as pbar:
+            assert len(logger.handlers) == 1
+            assert isinstance(logger.handlers[0], TqdmLoggingHandler)
+            LOGGER.info('test')
+            pbar.update(1)
