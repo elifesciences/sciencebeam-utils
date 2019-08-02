@@ -32,6 +32,15 @@ class TestRedirectLoggingToTqdm(object):
             assert isinstance(logger.handlers[0], TqdmLoggingHandler)
         assert logger.handlers == [stderr_console_handler, stdout_console_handler]
 
+    def test_should_inherit_console_logger_formatter(self):
+        logger = logging.Logger('test')
+        formatter = logging.Formatter('custom: %(message)')
+        console_handler = logging.StreamHandler(sys.stderr)
+        console_handler.setFormatter(formatter)
+        logger.handlers = [console_handler]
+        with redirect_logging_to_tqdm(logger=logger):
+            assert logger.handlers[0].formatter == formatter
+
     def test_should_not_remove_stream_handlers_not_fot_stdout_or_stderr(self):
         logger = logging.Logger('test')
         stream_handler = logging.StreamHandler(StringIO())
