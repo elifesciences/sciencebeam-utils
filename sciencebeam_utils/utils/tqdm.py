@@ -1,3 +1,5 @@
+from __future__ import absolute_import
+
 import logging
 import sys
 from contextlib import contextmanager
@@ -13,7 +15,7 @@ class TqdmLoggingHandler(logging.StreamHandler):
             self.flush()
         except (KeyboardInterrupt, SystemExit):
             raise
-        except:  # pylint: disable=bare-except
+        except:  # noqa pylint: disable=bare-except
             self.handleError(record)
 
 
