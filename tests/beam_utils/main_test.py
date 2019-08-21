@@ -9,7 +9,11 @@ from six import text_type
 from sciencebeam_utils.utils.collection import extend_dict
 
 import sciencebeam_utils.beam_utils.main as main_module
-from sciencebeam_utils.beam_utils.main import get_cloud_project, process_cloud_args
+from sciencebeam_utils.beam_utils.main import (
+    get_cloud_project,
+    process_cloud_args,
+    add_cloud_args
+)
 
 
 PROJECT_1 = 'project1'
@@ -50,6 +54,24 @@ class TestGetCloudProject(object):
     def test_should_return_text_type_if_check_output_text_type(self, check_output_mock):
         check_output_mock.return_value = text_type(PROJECT_1)
         assert isinstance(get_cloud_project(), text_type)
+
+
+class TestAddCloudArgs(object):
+    def test_should_accept_num_workers_with_underscore(self):
+        args = add_cloud_args(argparse.ArgumentParser()).parse_args(['--num_workers=123'])
+        assert args.num_workers == 123
+
+    def test_should_accept_num_workers_with_hyphen(self):
+        args = add_cloud_args(argparse.ArgumentParser()).parse_args(['--num-workers=123'])
+        assert args.num_workers == 123
+
+    def test_should_accept_job_name_with_underscore(self):
+        args = add_cloud_args(argparse.ArgumentParser()).parse_args(['--job_name=job1'])
+        assert args.job_name == 'job1'
+
+    def test_should_accept_job_name_with_hyphen(self):
+        args = add_cloud_args(argparse.ArgumentParser()).parse_args(['--job-name=job1'])
+        assert args.job_name == 'job1'
 
 
 @pytest.mark.usefixtures('get_cloud_project_mock')
