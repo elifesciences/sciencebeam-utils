@@ -65,6 +65,10 @@ class TestAddCloudArgs(object):
         args = add_cloud_args(argparse.ArgumentParser()).parse_args(['--num-workers=123'])
         assert args.num_workers == 123
 
+    def test_should_accept_max_workers(self):
+        args = add_cloud_args(argparse.ArgumentParser()).parse_args(['--max-workers=123'])
+        assert args.max_num_workers == 123
+
     def test_should_accept_job_name_with_underscore(self):
         args = add_cloud_args(argparse.ArgumentParser()).parse_args(['--job_name=job1'])
         assert args.job_name == 'job1'
