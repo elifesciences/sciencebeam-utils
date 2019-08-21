@@ -72,13 +72,19 @@ def add_cloud_args(parser):
         help='The cloud project name to be used for running this pipeline'
     )
     parser.add_argument(
-        '--num_workers', '--num-workers',
+        '--num-workers', '--num_workers',
         default=1,
         type=int,
         help='The number of workers.'
     )
     parser.add_argument(
-        '--job_name', '--job-name',
+        '--max-workers', '--max_num_workers',
+        dest='max_num_workers',
+        type=int,
+        help='The number of maximum workers (with auto-scaling).'
+    )
+    parser.add_argument(
+        '--job-name', '--job_name',
         type=str, required=False,
         help='The name of the cloud job'
     )
