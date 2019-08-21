@@ -4,6 +4,9 @@ import os
 import subprocess
 
 
+from six import text_type
+
+
 def get_logger():
     return logging.getLogger(__name__)
 
@@ -29,6 +32,9 @@ def get_cloud_project():
                     'flag or set a default project: '
                     'gcloud config set project YOUR_PROJECT_NAME'
                 )
+
+            if not isinstance(res, text_type):
+                res = res.decode('utf-8')
             return res
         except OSError as e:
             if e.errno == errno.ENOENT:
