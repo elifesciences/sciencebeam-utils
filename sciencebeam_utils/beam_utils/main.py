@@ -85,6 +85,7 @@ def add_cloud_args(parser):
         '--job-name-suffix', type=str, required=False,
         help='A suffix appended to the job name'
     )
+    return parser
 
 
 def process_cloud_args(parsed_args, output_path, name=None):
