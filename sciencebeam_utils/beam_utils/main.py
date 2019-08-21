@@ -4,6 +4,9 @@ import os
 import subprocess
 
 
+from six import text_type
+
+
 def get_logger():
     return logging.getLogger(__name__)
 
@@ -29,6 +32,9 @@ def get_cloud_project():
                     'flag or set a default project: '
                     'gcloud config set project YOUR_PROJECT_NAME'
                 )
+
+            if not isinstance(res, text_type):
+                res = res.decode('utf-8')
             return res
         except OSError as e:
             if e.errno == errno.ENOENT:
@@ -119,15 +125,12 @@ def process_cloud_args(parsed_args, output_path, name=None):
     if parsed_args.cloud:
         # Flags which need to be set for cloud runs.
         default_values = {
-            'project':
-            get_cloud_project(),
-            'temp_location':
-            os.path.join(os.path.dirname(output_path), 'temp'),
-            'runner':
-            'DataflowRunner',
-            'save_main_session':
-            True,
+            'temp_location':  os.path.join(os.path.dirname(output_path), 'temp'),
+            'runner': 'DataflowRunner',
+            'save_main_session': True,
         }
+        if not parsed_args.project:
+            parsed_args.project = get_cloud_project()
         if not parsed_args.job_name:
             parsed_args.job_name = get_default_job_name(name, parsed_args.job_name_suffix)
     else:
