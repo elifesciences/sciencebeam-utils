@@ -125,15 +125,12 @@ def process_cloud_args(parsed_args, output_path, name=None):
     if parsed_args.cloud:
         # Flags which need to be set for cloud runs.
         default_values = {
-            'project':
-            get_cloud_project(),
-            'temp_location':
-            os.path.join(os.path.dirname(output_path), 'temp'),
-            'runner':
-            'DataflowRunner',
-            'save_main_session':
-            True,
+            'temp_location':  os.path.join(os.path.dirname(output_path), 'temp'),
+            'runner': 'DataflowRunner',
+            'save_main_session': True,
         }
+        if not parsed_args.project:
+            parsed_args.project = get_cloud_project()
         if not parsed_args.job_name:
             parsed_args.job_name = get_default_job_name(name, parsed_args.job_name_suffix)
     else:
