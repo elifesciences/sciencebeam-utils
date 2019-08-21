@@ -4,7 +4,7 @@ from mock import patch
 
 import pytest
 
-from six import text_type, binary_type
+from six import text_type
 
 from sciencebeam_utils.utils.collection import extend_dict
 
@@ -44,7 +44,7 @@ class TestGetCloudProject(object):
         assert get_cloud_project() == PROJECT_1
 
     def test_should_return_text_type_if_check_output_returns_bytes(self, check_output_mock):
-        check_output_mock.return_value = binary_type(PROJECT_1)
+        check_output_mock.return_value = PROJECT_1.encode('utf-8')
         assert isinstance(get_cloud_project(), text_type)
 
     def test_should_return_text_type_if_check_output_text_type(self, check_output_mock):
