@@ -24,10 +24,6 @@ venv-create:
 	python3 -m venv $(VENV)
 
 
-venv-create-py2:
-	virtualenv -p python2.7 $(VENV)
-
-
 dev-install:
 	$(PIP) install -r requirements.txt
 	$(PIP) install -r requirements.prereq.txt
