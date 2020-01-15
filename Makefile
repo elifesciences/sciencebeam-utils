@@ -89,7 +89,7 @@ test-py3: build-py3
 	$(RUN_PY3) ./project_tests.sh
 
 
-test: test-py3
+test: test-py2
 
 
 watch-py2: build-py2 delete-pyc
@@ -119,12 +119,12 @@ ci-test-py3:
 ci-push-testpypi:
 	$(DOCKER_COMPOSE_CI) run --rm \
 		-v $$PWD/.pypirc:/root/.pypirc \
-		sciencebeam-utils-py3 \
+		sciencebeam-utils-py2 \
 		./docker/push-testpypi-commit-version.sh "$(COMMIT)"
 
 
 ci-push-pypi:
 	$(DOCKER_COMPOSE_CI) run --rm \
 		-v $$PWD/.pypirc:/root/.pypirc \
-		sciencebeam-utils-py3 \
+		sciencebeam-utils-py2 \
 		./docker/push-pypi-version.sh "$(VERSION)"
