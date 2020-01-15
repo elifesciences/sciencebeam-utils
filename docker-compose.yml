@@ -8,6 +8,7 @@ services:
                 base_image: python:2.7.14-stretch
                 version: ${VERSION}
         image: elifesciences/sciencebeam-utils-py2:${IMAGE_TAG}
+        networks: []
     sciencebeam-utils-py3:
         build:
             context: .
@@ -15,6 +16,5 @@ services:
                 base_image: python:3.6.8-stretch
                 version: ${VERSION}
         image: elifesciences/sciencebeam-utils-py3:${IMAGE_TAG}
-        networks: []
 
 networks: {}
