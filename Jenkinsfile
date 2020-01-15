@@ -56,11 +56,7 @@ elifePipeline {
 
         stage 'Project tests', {
             try {
-                parallel(['Project tests (PY2)': {
-                    withCommitStatus({
-                        sh "make IMAGE_TAG=${commit} NO_BUILD=y ci-test-py2"
-                    }, 'project-tests/py2', commit)
-                },
+                parallel([
                 'Project tests (PY3)': {
                     withCommitStatus({
                         sh "make IMAGE_TAG=${commit} NO_BUILD=y ci-test-py3"
