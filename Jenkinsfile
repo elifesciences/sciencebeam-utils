@@ -44,7 +44,7 @@ elifePipeline {
                     script: (
                         "IMAGE_TAG=${commit} " +
                         "docker-compose -f docker-compose.yml -f docker-compose.ci.yml run " +
-                        "sciencebeam-utils-py2 ./print_version.sh"
+                        "sciencebeam-utils-py3 ./print_version.sh"
                     ),
                     returnStdout: true
                 ).trim()
