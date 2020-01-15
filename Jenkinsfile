@@ -56,12 +56,7 @@ elifePipeline {
 
         stage 'Project tests', {
             try {
-                parallel([
-                'Project tests (PY3)': {
-                    withCommitStatus({
-                        sh "make IMAGE_TAG=${commit} NO_BUILD=y ci-test-py3"
-                    }, 'project-tests/py3', commit)
-                }])
+                sh "make IMAGE_TAG=${commit} NO_BUILD=y ci-test-py3"
             } finally {
                 sh 'docker-compose down -v'
             }
