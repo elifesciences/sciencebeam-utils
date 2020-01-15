@@ -44,7 +44,7 @@ elifePipeline {
                     script: (
                         "IMAGE_TAG=${commit} " +
                         "docker-compose -f docker-compose.yml -f docker-compose.ci.yml run " +
-                        "sciencebeam-utils-py3 ./print_version.sh"
+                        "sciencebeam-utils ./print_version.sh"
                     ),
                     returnStdout: true
                 ).trim()
@@ -56,7 +56,7 @@ elifePipeline {
 
         stage 'Project tests', {
             try {
-                sh "make IMAGE_TAG=${commit} NO_BUILD=y ci-test-py3"
+                sh "make IMAGE_TAG=${commit} NO_BUILD=y ci-test"
             } finally {
                 sh 'docker-compose down -v'
             }
