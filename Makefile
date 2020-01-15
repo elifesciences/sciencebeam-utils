@@ -6,7 +6,6 @@ VENV = venv
 PIP = $(VENV)/bin/pip
 PYTHON = $(VENV)/bin/python
 
-RUN_PY2 = $(DOCKER_COMPOSE) run --rm sciencebeam-utils-py2
 RUN_PY3 = $(DOCKER_COMPOSE) run --rm sciencebeam-utils-py3
 PYTEST_ARGS =
 
@@ -65,12 +64,6 @@ build-all:
 	fi
 
 
-build-py2:
-	if [ "$(NO_BUILD)" != "y" ]; then \
-		$(DOCKER_COMPOSE) build sciencebeam-utils-py2; \
-	fi
-
-
 build-py3:
 	if [ "$(NO_BUILD)" != "y" ]; then \
 		$(DOCKER_COMPOSE) build sciencebeam-utils-py3; \
@@ -81,10 +74,6 @@ delete-pyc:
 	find ./sciencebeam_utils/ -name '*.pyc' -delete
 
 
-test-py2: build-py2
-	$(RUN_PY2) ./project_tests.sh
-
-
 test-py3: build-py3
 	$(RUN_PY3) ./project_tests.sh
 
@@ -92,24 +81,12 @@ test-py3: build-py3
 test: test-py3
 
 
-watch-py2: build-py2 delete-pyc
-	$(RUN_PY2) pytest-watch -- $(PYTEST_ARGS)
-
-
 watch-py3: build-py3 delete-pyc
 	$(RUN_PY3) pytest-watch -- $(PYTEST_ARGS)
 
 
-ci-build-py2:
-	make DOCKER_COMPOSE="$(DOCKER_COMPOSE_CI)" build-py2
-
-
 ci-build-py3:
 	make DOCKER_COMPOSE="$(DOCKER_COMPOSE_CI)" build-py3
-
-
-ci-test-py2:
-	make DOCKER_COMPOSE="$(DOCKER_COMPOSE_CI)" test-py2
 
 
 ci-test-py3:
