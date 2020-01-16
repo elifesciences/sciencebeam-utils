@@ -44,7 +44,7 @@ elifePipeline {
                     script: (
                         "IMAGE_TAG=${commit} " +
                         "docker-compose -f docker-compose.yml -f docker-compose.ci.yml run " +
-                        "sciencebeam-utils-py2 ./print_version.sh"
+                        "sciencebeam-utils ./print_version.sh"
                     ),
                     returnStdout: true
                 ).trim()
@@ -56,16 +56,7 @@ elifePipeline {
 
         stage 'Project tests', {
             try {
-                parallel(['Project tests (PY2)': {
-                    withCommitStatus({
-                        sh "make IMAGE_TAG=${commit} NO_BUILD=y ci-test-py2"
-                    }, 'project-tests/py2', commit)
-                },
-                'Project tests (PY3)': {
-                    withCommitStatus({
-                        sh "make IMAGE_TAG=${commit} NO_BUILD=y ci-test-py3"
-                    }, 'project-tests/py3', commit)
-                }])
+                sh "make IMAGE_TAG=${commit} NO_BUILD=y ci-test"
             } finally {
                 sh 'docker-compose down -v'
             }

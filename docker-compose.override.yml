@@ -1,6 +1,6 @@
 version: '3'
 
 services:
-    sciencebeam-utils-py2:
+    sciencebeam-utils:
         volumes:
         - ./sciencebeam_utils:/srv/sciencebeam-utils/sciencebeam_utils
