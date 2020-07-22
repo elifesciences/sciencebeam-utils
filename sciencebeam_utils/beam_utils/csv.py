@@ -85,7 +85,7 @@ def _strip_quotes(s):
 # (move back if still active)
 
 
-class ReadLineIterator(object):
+class ReadLineIterator:
     def __init__(self, obj):
         self._obj = obj
 
@@ -160,10 +160,7 @@ class CsvFileSource(FileBasedSource):
 
             line_no += 1
             if self.dictionary_output:
-                yield {
-                    header: value
-                    for header, value in zip(headers, row)
-                }
+                yield dict(zip(headers, row))
             else:
                 yield row
 

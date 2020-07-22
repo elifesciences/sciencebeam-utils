@@ -41,7 +41,7 @@ def get_logger():
     return logging.getLogger(__name__)
 
 
-class TestContext(object):
+class TestContext:
     def __init__(self):
         self.file_content_map = dict()
         self.object_map = dict()
@@ -84,7 +84,7 @@ for c in [Mock, MagicMock, MagicProxy]:
 
 @pytest.mark.filterwarnings('ignore::DeprecationWarning')
 @pytest.mark.filterwarnings('ignore::UserWarning')
-class BeamTest(object):
+class BeamTest:
     @pytest.fixture(name='test_context', autouse=True)
     def init_test_context(self):
         get_logger().debug('setting up test context')

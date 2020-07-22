@@ -17,7 +17,7 @@ def get_logger():
 
 @contextmanager
 def open_file(path, mode='r', encoding='utf-8', **kwargs):
-    if mode == 'r' or mode == 'w':
+    if mode in ('r', 'w'):
         info = codecs.lookup(encoding)
         open_binary = FileSystems.open if mode == 'r' else FileSystems.create
         with open_binary(path, **kwargs) as fp:
