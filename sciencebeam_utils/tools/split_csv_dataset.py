@@ -94,11 +94,10 @@ def _substract_list(list1, list2):
 
 
 def split_rows(
-        rows,  # type: List[Row]
-        percentages,  # type: List[float]
-        fill=False,  # type: bool
-        existing_split=None):  # type: List[List[Row]]
-    # type: (...) -> List[List[Row]]
+        rows: List[Row],
+        percentages: List[float],
+        fill: bool = False,
+        existing_split: List[List[Row]] = None) -> List[List[Row]]:
     if not existing_split:
         return _split_rows_without_existing_split(rows, percentages, fill=fill)
     LOGGER.debug('existing_split: %s', existing_split)

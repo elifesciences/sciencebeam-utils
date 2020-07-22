@@ -2,6 +2,8 @@ import errno
 import logging
 import os
 import subprocess
+from getpass import getuser
+from time import gmtime, strftime
 
 
 from six import text_type
@@ -12,6 +14,7 @@ def get_logger():
 
 
 def create_fn_api_runner():
+    # pylint: disable=import-outside-toplevel
     from apache_beam.runners.portability.fn_api_runner import FnApiRunner
     return FnApiRunner()
 
@@ -47,9 +50,6 @@ def get_cloud_project():
 
 
 def get_default_job_name(name, suffix=''):
-    from getpass import getuser
-    from time import gmtime, strftime
-
     timestamp_str = strftime("%Y%m%d-%H%M%S", gmtime())
     return '%s-%s%s-%s' % (name or 'beamapp', getuser(), suffix or '', timestamp_str)
 

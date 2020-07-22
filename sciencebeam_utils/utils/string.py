@@ -2,7 +2,7 @@ from future.utils import python_2_unicode_compatible
 
 
 @python_2_unicode_compatible
-class LazyStr(object):
+class LazyStr:
     def __init__(self, fn):
         self.fn = fn
 

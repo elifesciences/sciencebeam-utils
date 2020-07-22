@@ -53,7 +53,7 @@ def group_file_pairs_by_parent_directory_or_name(files_by_type):
                 else:
                     LOGGER.info(
                         'no exclusively matching files found: %s',
-                        [files for files in files_by_name]
+                        list(files_by_name)
                     )
 
 

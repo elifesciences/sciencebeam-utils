@@ -3,7 +3,7 @@ from mock import patch, ANY
 
 import pytest
 
-from sciencebeam_utils.tools import get_output_files as get_output_files
+from sciencebeam_utils.tools import get_output_files
 from sciencebeam_utils.tools.get_output_files import (
     get_output_file_list,
     run,
@@ -55,7 +55,7 @@ def _to_relative_file_list():
         yield m
 
 
-class TestGetOutputFileList(object):
+class TestGetOutputFileList:
     def test_should_return_output_file_with_path_and_change_ext(self):
         assert get_output_file_list(
             ['/source/path/file.pdf'],
@@ -69,7 +69,7 @@ class TestGetOutputFileList(object):
     "load_file_list_mock", "get_output_file_list_mock", "save_file_list_mock",
     "to_relative_file_list_mock"
 )
-class TestRun(object):
+class TestRun:
     def test_should_pass_around_parameters(
             self,
             load_file_list_mock,
@@ -179,7 +179,7 @@ class TestRun(object):
         )
 
 
-class TestMain(object):
+class TestMain:
     def test_should_parse_args_and_call_run(self):
         m = get_output_files
         with patch.object(m, 'parse_args') as parse_args_mock:

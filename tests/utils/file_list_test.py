@@ -43,7 +43,7 @@ def _to_absolute_file_list():
         yield mock
 
 
-class TestIsCsvOrTsvFileList(object):
+class TestIsCsvOrTsvFileList:
     def test_should_return_true_if_file_ext_is_csv(self):
         assert is_csv_or_tsv_file_list('files.csv')
 
@@ -63,7 +63,7 @@ class TestIsCsvOrTsvFileList(object):
         assert not is_csv_or_tsv_file_list('files.lst.gz')
 
 
-class TestLoadPlainFileList(object):
+class TestLoadPlainFileList:
     def test_should_read_multiple_file_paths_from_file(self):
         with NamedTemporaryFile('w') as f:
             f.write('\n'.join([FILE_1, FILE_2]))
@@ -83,7 +83,7 @@ class TestLoadPlainFileList(object):
             assert load_plain_file_list(f.name, limit=1) == [FILE_1]
 
 
-class TestLoadCsvOrTsvFileList(object):
+class TestLoadCsvOrTsvFileList:
     def test_should_read_multiple_file_paths_from_file_with_header_using_column_name(self):
         with NamedTemporaryFile('w') as f:
             f.write('\n'.join(['url', FILE_1, FILE_2]))
@@ -129,7 +129,7 @@ class TestLoadCsvOrTsvFileList(object):
             assert load_csv_or_tsv_file_list(f.name, 'url', limit=1) == [FILE_1]
 
 
-class TestToAbsoluteFileList(object):
+class TestToAbsoluteFileList:
     def test_should_make_path_absolute(self):
         assert to_absolute_file_list('/base/path', ['sub/file1']) == ['/base/path/sub/file1']
 
@@ -137,7 +137,7 @@ class TestToAbsoluteFileList(object):
         assert to_absolute_file_list('/base/path', ['/other/file1']) == ['/other/file1']
 
 
-class TestToRelativeFileList(object):
+class TestToRelativeFileList:
     def test_should_make_path_absolute(self):
         assert to_relative_file_list('/base/path', ['/base/path/sub/file1']) == ['sub/file1']
 
@@ -148,7 +148,7 @@ class TestToRelativeFileList(object):
 @pytest.mark.usefixtures(
     'load_plain_file_list_mock', 'load_csv_or_tsv_file_list_mock', 'to_absolute_file_list_mock'
 )
-class TestLoadFileList(object):
+class TestLoadFileList:
     def test_should_call_load_plain_file_list(self, load_plain_file_list_mock):
         result = load_file_list(
             'file-list.lst', column='url', header=True, limit=1, to_absolute=False
@@ -175,7 +175,7 @@ class TestLoadFileList(object):
         assert result == to_absolute_file_list_mock.return_value
 
 
-class TestSavePlainFileList(object):
+class TestSavePlainFileList:
     def test_should_write_multiple_file_paths(self):
         with TemporaryDirectory() as path:
             file_list_path = os.path.join(path, 'out.lst')
@@ -189,7 +189,7 @@ class TestSavePlainFileList(object):
             assert load_plain_file_list(file_list_path) == [UNICODE_FILE_1]
 
 
-class TestSaveCsvOrTsvFileList(object):
+class TestSaveCsvOrTsvFileList:
     def test_should_write_multiple_file_paths(self):
         with TemporaryDirectory() as path:
             file_list_path = os.path.join(path, 'out.csv')
@@ -203,7 +203,7 @@ class TestSaveCsvOrTsvFileList(object):
             assert load_csv_or_tsv_file_list(file_list_path, column='url') == [UNICODE_FILE_1]
 
 
-class TestSaveFileList(object):
+class TestSaveFileList:
     def test_should_call_save_plain_file_list(self):
         with patch.object(file_list_loader, 'save_plain_file_list') as mock:
             save_file_list('file-list.lst', FILE_LIST, column='url', header=True)

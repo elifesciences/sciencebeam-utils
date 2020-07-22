@@ -26,7 +26,7 @@ def create_args(**kwargs):
     return namedtuple('args', kwargs.keys())(**kwargs)
 
 
-class TestExtractProportionsFromArgs(object):
+class TestExtractProportionsFromArgs:
     def test_should_create_train_test_split_with_only_train_specified(self):
         assert extract_proportions_from_args(
             create_args(train=0.6, test=None, validation=None)
@@ -51,7 +51,7 @@ def _chars_to_rows_list(*chars_list):
     return [_chars_to_rows(chars) for chars in chars_list]
 
 
-class TestSplitRows(object):
+class TestSplitRows:
     def test_should_split_train_test(self):
         assert split_rows(
             _chars_to_rows('0123456789'), [0.6, 0.4]
@@ -91,7 +91,7 @@ class TestSplitRows(object):
         ) == _chars_to_rows_list('13', '24')
 
 
-class TestGetOutputFilenamesForNames(object):
+class TestGetOutputFilenamesForNames:
     def test_should_add_name_and_ext_with_path_sep_if_out_ends_with_slash(self):
         assert output_filenames_for_names(
             ['train', 'test'], 'out/', '.tsv'
@@ -103,14 +103,14 @@ class TestGetOutputFilenamesForNames(object):
         ) == ['out-train.tsv', 'out-test.tsv']
 
 
-class TestGetBackupFileSuffix(object):
+class TestGetBackupFileSuffix:
     @patch.object(split_csv_dataset_module, 'datetime')
     def test_should_return_backup_suffix_with_datetime(self, datetime_mock):
         datetime_mock.utcnow.return_value = datetime(2001, 2, 3, 4, 5, 6)
         assert get_backup_file_suffix() == '.backup-20010203-040506'
 
 
-class TestRun(object):
+class TestRun:
     def test_should_split_train_test(self, tmpdir):
         file_list = tmpdir.join('file-list.tsv')
         train_file_list = tmpdir.join('file-list-train.tsv')

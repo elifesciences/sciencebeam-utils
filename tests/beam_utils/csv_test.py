@@ -40,7 +40,7 @@ def to_csv(rows, delimiter):
     return (format_csv_rows(rows, delimiter).replace('\r\n', '\n') + '\n').encode('utf-8')
 
 
-class TestFormatCsvRows(object):
+class TestFormatCsvRows:
     def test_should_format_empty_rows(self):
         assert format_csv_rows([]) == ''
 

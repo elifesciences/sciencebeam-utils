@@ -4,7 +4,7 @@ from mock import patch
 
 import pytest
 
-from sciencebeam_utils.tools import find_file_pairs as find_file_pairs
+from sciencebeam_utils.tools import find_file_pairs
 from sciencebeam_utils.tools.find_file_pairs import (
     to_relative_file_pairs,
     run,
@@ -93,7 +93,7 @@ def _out_file(tmpdir):
     return tmpdir.join(OUTPUT_FILE)
 
 
-class TestToRelativeFilePairs(object):
+class TestToRelativeFilePairs:
     def test_should_make_paths_relative(self):
         assert list(to_relative_file_pairs(
             '/parent',
@@ -101,7 +101,7 @@ class TestToRelativeFilePairs(object):
         )) == [('sub/file1', 'sub/file2')]
 
 
-class TestRun(object):
+class TestRun:
     def test_should_pass_around_parameters(
             self,
             find_file_pairs_grouped_by_parent_directory_or_name_mock,
@@ -153,7 +153,7 @@ class TestRun(object):
         ]
 
 
-class TestMain(object):
+class TestMain:
     def test_should_parse_args_and_call_run(self, parse_args_mock, run_mock):
         main(SOME_ARGV)
         parse_args_mock.assert_called_with(SOME_ARGV)

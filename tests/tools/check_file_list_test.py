@@ -15,7 +15,7 @@ FILE_1 = 'file1'
 FILE_2 = 'file2'
 
 
-class TestMapFileListToFileExists(object):
+class TestMapFileListToFileExists:
     def test_should_return_single_file_exists(self):
         m = check_file_list_module
         with patch.object(m, 'FileSystems') as FileSystems:
@@ -25,7 +25,7 @@ class TestMapFileListToFileExists(object):
             FileSystems.exists.assert_called_with(FILE_1)
 
 
-class TestFormatFileList(object):
+class TestFormatFileList:
     def test_should_format_multiple_files(self):
         assert (
             format_file_list([FILE_1, FILE_2]) ==
@@ -33,7 +33,7 @@ class TestFormatFileList(object):
         )
 
 
-class TestFormatFileExistsResults(object):
+class TestFormatFileExistsResults:
     def test_should_format_no_files(self):
         assert (
             format_file_exists_results([], []) ==
@@ -55,7 +55,7 @@ class TestFormatFileExistsResults(object):
         )
 
 
-class TestCheckFileListAndReportResults(object):
+class TestCheckFileListAndReportResults:
     def test_should_pass_file_list_to_format(self):
         m = check_file_list_module
         with patch.object(m, 'map_file_list_to_file_exists') as map_file_list_to_file_exists_mock:

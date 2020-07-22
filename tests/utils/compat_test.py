@@ -11,7 +11,7 @@ UNICODE_STR = UNICODE_VALUE.encode('utf-8') if PY2 else UNICODE_VALUE
 
 
 @python_2_unicode_compatible
-class ReprWrapper(object):
+class ReprWrapper:
     def __init__(self, value):
         self.value = value
 
@@ -20,7 +20,7 @@ class ReprWrapper(object):
 
 
 @python_2_unicode_compatible
-class StrWrapper(object):
+class StrWrapper:
     def __init__(self, value):
         self.value = value
 
@@ -29,7 +29,7 @@ class StrWrapper(object):
 
 
 @python_2_unicode_compatible
-class ReprStrWrapper(object):
+class ReprStrWrapper:
     def __init__(self, value):
         self.value = value
 
@@ -40,7 +40,7 @@ class ReprStrWrapper(object):
         return self.value
 
 
-class TestPython2UnicodeCompatible(object):
+class TestPython2UnicodeCompatible:
     def test_should_return_repr_ascii_value(self):
         assert repr(ReprWrapper(text_type(ASCII_VALUE))) == ASCII_VALUE
 
