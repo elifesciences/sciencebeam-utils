@@ -3,7 +3,7 @@ from sciencebeam_utils.utils.string import (
 )
 
 
-class TestParseList(object):
+class TestParseList:
     def test_should_return_empty_list_for_empty_string(self):
         assert parse_list('') == []
 

@@ -42,7 +42,7 @@ def _get_cloud_project_mock():
         yield mock
 
 
-class TestGetCloudProject(object):
+class TestGetCloudProject:
     def test_should_return_project(self, check_output_mock):
         check_output_mock.return_value = PROJECT_1
         assert get_cloud_project() == PROJECT_1
@@ -56,7 +56,7 @@ class TestGetCloudProject(object):
         assert isinstance(get_cloud_project(), text_type)
 
 
-class TestAddCloudArgs(object):
+class TestAddCloudArgs:
     def test_should_accept_num_workers_with_underscore(self):
         args = add_cloud_args(argparse.ArgumentParser()).parse_args(['--num_workers=123'])
         assert args.num_workers == 123
@@ -79,7 +79,7 @@ class TestAddCloudArgs(object):
 
 
 @pytest.mark.usefixtures('get_cloud_project_mock')
-class TestProcessCloudArgs(object):
+class TestProcessCloudArgs:
     def test_should_use_get_cloud_project_if_project_is_empty(
             self, get_cloud_project_mock):
         get_cloud_project_mock.return_value = PROJECT_1

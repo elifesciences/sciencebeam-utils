@@ -1,7 +1,7 @@
 from sciencebeam_utils.utils.file_pairs import group_file_pairs_by_parent_directory_or_name
 
 
-class TestGroupFilePairsByParentDirectoryOrName(object):
+class TestGroupFilePairsByParentDirectoryOrName:
     def test_should_return_empty_list_with_empty_input_file_lists(self):
         assert list(group_file_pairs_by_parent_directory_or_name([
             [],

@@ -14,7 +14,7 @@ except AttributeError:
         perf_counter = time.time
 
 
-class StopWatch(object):
+class StopWatch:
     def __init__(self):
         self.start = perf_counter()
 
@@ -26,7 +26,7 @@ class StopWatch(object):
         return elapsed
 
 
-class StopWatchRecorder(object):
+class StopWatchRecorder:
     def __init__(self):
         self.stop_watch = StopWatch()
         self.recorded_timings = []

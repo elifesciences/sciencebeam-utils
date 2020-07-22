@@ -10,7 +10,7 @@ from sciencebeam_utils.utils.file_path import (
 )
 
 
-class TestRelativePath(object):
+class TestRelativePath:
     def test_should_return_path_if_base_path_is_none(self):
         assert relative_path(None, 'file') == 'file'
 
@@ -21,7 +21,7 @@ class TestRelativePath(object):
         assert relative_path('/parent', '/parent/file') == 'file'
 
 
-class TestJoinIfRelativePath(object):
+class TestJoinIfRelativePath:
     def test_should_return_path_if_base_path_is_none(self):
         assert join_if_relative_path(None, 'file') == 'file'
 
@@ -32,7 +32,7 @@ class TestJoinIfRelativePath(object):
         assert join_if_relative_path('/parent', 'file') == '/parent/file'
 
 
-class TestChangeExt(object):
+class TestChangeExt:
     def test_should_replace_simple_ext_with_simple_ext(self):
         assert change_ext('file.pdf', None, '.xml') == 'file.xml'
 
@@ -43,7 +43,7 @@ class TestChangeExt(object):
         assert change_ext('file.pdf.gz', None, '.svg.zip') == 'file.svg.zip'
 
 
-class TestGetOutputFile(object):
+class TestGetOutputFile:
     def test_should_return_output_file_with_path_and_change_ext(self):
         assert get_output_file(
             '/source/path/file.pdf',
@@ -53,7 +53,7 @@ class TestGetOutputFile(object):
         ) == '/output/path/file.xml'
 
 
-class TestBasePathForFileList(object):
+class TestBasePathForFileList:
     def test_should_return_empty_string_if_file_list_is_empty(self):
         assert base_path_for_file_list([]) == ''
 
@@ -83,7 +83,7 @@ class TestBasePathForFileList(object):
         assert base_path_for_file_list(['/base/path/file1', '/base/path/file2']) == '/base/path'
 
 
-class TestGetOrValidateBasePath(object):
+class TestGetOrValidateBasePath:
     def test_should_return_base_path_of_two_files_if_no_base_path_was_provided(self):
         assert get_or_validate_base_path(
             ['/base/path/1/file', '/base/path/2/file'],

@@ -11,7 +11,7 @@ SOME_VALUE_1 = 'some value1'
 SOME_VALUE_2 = 'some value2'
 
 
-class TestGetTextContent(object):
+class TestGetTextContent:
     def test_should_return_simple_text(self):
         node = E.parent(SOME_VALUE_1)
         assert get_text_content(node) == SOME_VALUE_1
@@ -34,7 +34,7 @@ class TestGetTextContent(object):
         assert get_text_content(node, exclude=[child]) == SOME_VALUE_2
 
 
-class TestGetImmediateText(object):
+class TestGetImmediateText:
     def test_should_return_simple_text(self):
         node = E.parent(SOME_VALUE_1)
         assert get_immediate_text(node) == [SOME_VALUE_1]
@@ -44,7 +44,7 @@ class TestGetImmediateText(object):
         assert get_immediate_text(node) == []
 
 
-class TestXmlFromStringWithRecover(object):
+class TestXmlFromStringWithRecover:
     def test_should_parse_clean_xml(self):
         root = xml_from_string_with_recover('<root><child1>%s</child1></root>' % SOME_VALUE_1)
         node = root.find('child1')

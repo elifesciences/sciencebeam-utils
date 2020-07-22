@@ -14,7 +14,7 @@ from sciencebeam_utils.utils.tqdm import (
 LOGGER = logging.getLogger(__name__)
 
 
-class TestRedirectLoggingToTqdm(object):
+class TestRedirectLoggingToTqdm:
     def test_should_add_and_remove_tqdm_handler(self):
         logger = logging.Logger('test')
         with redirect_logging_to_tqdm(logger=logger):
@@ -52,7 +52,7 @@ class TestRedirectLoggingToTqdm(object):
         assert logger.handlers == [stream_handler]
 
 
-class TestTqdmWithLoggingRedirect(object):
+class TestTqdmWithLoggingRedirect:
     def test_should_add_and_remove_handler_from_root_logger_by_default(self):
         original_handlers = list(logging.root.handlers)
         with tqdm_with_logging_redirect(total=1) as pbar:
