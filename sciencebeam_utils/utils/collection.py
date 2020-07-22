@@ -2,20 +2,21 @@ from __future__ import absolute_import
 
 from collections import namedtuple
 from itertools import groupby
+from typing import Iterable, List, T
 
 from six import iteritems
 
 
-def flatten(l):
-    return [item for sublist in l for item in sublist]
+def flatten(list_: Iterable[T]) -> List[T]:
+    return [item for sublist in list_ for item in sublist]
 
 
-def iter_flatten(l):
-    return (item for sublist in l for item in sublist)
+def iter_flatten(list_: Iterable[T]) -> Iterable[T]:
+    return (item for sublist in list_ for item in sublist)
 
 
-def filter_truthy(list_of_something):
-    return [l for l in list_of_something if l]
+def filter_truthy(list_: Iterable[T]) -> List[T]:
+    return [item for item in list_ if item]
 
 
 def strip_all(list_of_strings):
