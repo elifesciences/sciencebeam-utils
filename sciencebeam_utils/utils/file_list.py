@@ -51,11 +51,11 @@ def load_csv_or_tsv_file_list(file_list_path, column, header=True, limit=None):
             else:
                 try:
                     column_index = header_row.index(column)
-                except ValueError:
+                except ValueError as exc:
                     raise ValueError(
                         'column %s not found, available columns: %s' %
                         (column, header_row)
-                    )
+                    ) from exc
         lines = (x[column_index] for x in reader)
         if limit:
             lines = islice(lines, 0, limit)
