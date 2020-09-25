@@ -5,9 +5,11 @@ ENV PROJECT_HOME=/srv/sciencebeam-utils
 WORKDIR ${PROJECT_HOME}
 
 ENV VENV=${PROJECT_HOME}/venv
-RUN pip install --no-cache-dir --only-binary --upgrade virtualenv \
-    && virtualenv ${VENV}
+RUN python3 -m venv ${VENV}
 ENV PYTHONUSERBASE=${VENV} PATH=${VENV}/bin:$PATH
+
+COPY requirements.build.txt ${PROJECT_HOME}/
+RUN pip install -r requirements.build.txt
 
 COPY requirements.prereq.txt ${PROJECT_HOME}/
 RUN pip install -r requirements.prereq.txt
