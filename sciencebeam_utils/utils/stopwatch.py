@@ -1,17 +1,4 @@
-import sys
-import time
-
-
-try:
-    perf_counter = time.perf_counter
-except AttributeError:
-    # as per original timeit source (before perf_counter)
-    if sys.platform == "win32":
-        # On Windows, the best timer is time.clock()
-        perf_counter = time.clock
-    else:
-        # On most other platforms the best timer is time.time()
-        perf_counter = time.time
+from time import perf_counter
 
 
 class StopWatch:
