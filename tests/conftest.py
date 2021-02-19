@@ -5,6 +5,6 @@ import pytest
 
 @pytest.fixture(scope='session', autouse=True)
 def setup_logging():
-    logging.root.handlers = []
     logging.basicConfig(level='INFO')
-    logging.getLogger('sciencebeam_utils').setLevel('DEBUG')
+    for name in ['tests', 'sciencebeam_utils']:
+        logging.getLogger(name).setLevel('DEBUG')
