@@ -7,11 +7,11 @@ Provides utility functions related to the [ScienceBeam](https://github.com/elife
 Please refer to the [development documentation](https://github.com/elifesciences/sciencebeam-utils/blob/develop/doc/development.md)
 if you wish to contribute to the project.
 
-Most tools are not yet documented. Please feel free to browse the code or tests or ask raise an issue.
+Most tools are not yet documented. Please feel free to browse the code or tests, or raise an issue.
 
 ## Pre-requisites
 
-- Python 2.7 or 3 (Apache Beam may not fully support Python 3 yet)
+- Python 3
 - [Apache Beam](https://beam.apache.org/)
 
 [Apache Beam](https://beam.apache.org/) may be used to for preprocessing but also its transparent FileSystems API which makes it easy to access files in the cloud.
