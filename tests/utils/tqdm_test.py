@@ -34,7 +34,7 @@ class TestRedirectLoggingToTqdm:
 
     def test_should_inherit_console_logger_formatter(self):
         logger = logging.Logger('test')
-        formatter = logging.Formatter('custom: %(message)')
+        formatter = logging.Formatter('custom: %(message)s')
         console_handler = logging.StreamHandler(sys.stderr)
         console_handler.setFormatter(formatter)
         logger.handlers = [console_handler]
