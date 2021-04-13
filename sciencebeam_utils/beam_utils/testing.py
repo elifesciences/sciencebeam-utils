@@ -5,8 +5,15 @@ from contextlib import contextmanager
 from io import BytesIO
 from abc import ABCMeta, abstractmethod
 
-from mock import patch, Mock, MagicMock
-from mock.mock import MagicProxy
+from unittest.mock import patch, Mock, MagicMock, MagicProxy
+try:
+    from mock import Mock as DeprecatedMock
+    from mock import MagicMock as DeprecatedMagicMock
+    from mock.mock import MagicProxy as DeprecatedMagicProxy
+except ImportError:
+    DeprecatedMock = None
+    DeprecatedMagicMock = None
+    DeprecatedMagicProxy = None
 
 import pytest
 
@@ -78,7 +85,9 @@ def mock_reduce(obj):
     return unpickle_mock, (obj_id,)
 
 
-for c in [Mock, MagicMock, MagicProxy]:
+for c in [Mock, MagicMock, MagicProxy, DeprecatedMock, DeprecatedMagicMock, DeprecatedMagicProxy]:
+    if c is None:
+        continue
     c.__reduce__ = mock_reduce
 
 
