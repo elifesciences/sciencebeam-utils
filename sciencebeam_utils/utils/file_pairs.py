@@ -1,6 +1,7 @@
 import logging
 import os
 from functools import reduce  # pylint: disable=redefined-builtin
+from typing import Iterable, List, Tuple
 
 from apache_beam.io.filesystems import FileSystems
 
@@ -35,13 +36,17 @@ def zip_by_keys(*dict_list):
     )
 
 
-def group_file_pairs_by_parent_directory_or_name(files_by_type):
+def group_file_pairs_by_parent_directory_or_name(
+    files_by_type: List[List[str]]
+) -> Iterable[Tuple[str, ...]]:
     grouped_files_by_pattern = [
         group_files_by_parent_directory(files) for files in files_by_type
     ]
     for files_in_group_by_pattern in zip_by_keys(*grouped_files_by_pattern):
         if all(len(files or []) == 1 for files in files_in_group_by_pattern):
-            yield tuple([files[0] for files in files_in_group_by_pattern])
+            yield tuple([  # pylint: disable=consider-using-generator
+                files[0] for files in files_in_group_by_pattern
+            ])
         else:
             grouped_by_name = [
                 group_files_by_name_excl_ext(files or [])
@@ -49,7 +54,9 @@ def group_file_pairs_by_parent_directory_or_name(files_by_type):
             ]
             for files_by_name in zip_by_keys(*grouped_by_name):
                 if all(len(files or []) == 1 for files in files_by_name):
-                    yield tuple([files[0] for files in files_by_name])
+                    yield tuple([  # pylint: disable=consider-using-generator
+                        files[0] for files in files_by_name
+                    ])
                 else:
                     LOGGER.info(
                         'no exclusively matching files found: %s',
