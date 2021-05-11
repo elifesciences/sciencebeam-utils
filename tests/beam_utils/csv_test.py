@@ -1,7 +1,7 @@
 from __future__ import absolute_import
 
 from contextlib import contextmanager
-from mock import patch
+from unittest.mock import patch
 
 import pytest
 
