@@ -7,9 +7,9 @@ from abc import ABCMeta, abstractmethod
 
 from unittest.mock import patch, Mock, MagicMock, MagicProxy
 try:
-    from mock import Mock as DeprecatedMock
-    from mock import MagicMock as DeprecatedMagicMock
-    from mock.mock import MagicProxy as DeprecatedMagicProxy
+    from mock import Mock as DeprecatedMock  # type: ignore
+    from mock import MagicMock as DeprecatedMagicMock  # type: ignore
+    from mock.mock import MagicProxy as DeprecatedMagicProxy  # type: ignore
 except ImportError:
     DeprecatedMock = None
     DeprecatedMagicMock = None
