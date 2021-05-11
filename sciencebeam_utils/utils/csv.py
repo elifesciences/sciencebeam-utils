@@ -2,6 +2,7 @@ from __future__ import absolute_import
 
 import os
 import logging
+from typing import ContextManager, IO
 
 from backports import csv  # pylint: disable=no-name-in-module
 
@@ -18,8 +19,8 @@ def csv_delimiter_by_filename(filename):
     return ','
 
 
-def open_csv_output(filename):
-    return open(filename, 'w')
+def open_csv_output(filename: str) -> ContextManager[IO]:
+    return open(filename, 'w')  # pylint: disable=consider-using-with
 
 
 def write_csv_rows(writer, iterable):
