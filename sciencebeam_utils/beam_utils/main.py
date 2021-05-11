@@ -72,6 +72,12 @@ def add_cloud_args(parser):
         help='The cloud project name to be used for running this pipeline'
     )
     parser.add_argument(
+        '--region',
+        default=None,
+        type=str,
+        help='The Google Compute Engine region for creating'
+    )
+    parser.add_argument(
         '--num-workers', '--num_workers',
         default=1,
         type=int,
