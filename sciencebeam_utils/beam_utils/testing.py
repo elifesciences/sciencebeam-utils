@@ -139,8 +139,8 @@ class MockWriteToText(beam.PTransform):
         super(MockWriteToText, self).__init__()
         self._sink = MockWriteToText.WriteDoFn(*args, **kwargs)
 
-    def expand(self, pcoll):  # pylint: disable=arguments-differ
-        return pcoll | 'MockWriteToText' >> beam.ParDo(self._sink)
+    def expand(self, input_or_inputs):
+        return input_or_inputs | 'MockWriteToText' >> beam.ParDo(self._sink)
 
 
 def MockReadFromText(

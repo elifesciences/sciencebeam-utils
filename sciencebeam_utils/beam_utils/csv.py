@@ -60,9 +60,9 @@ class WriteDictCsv(beam.PTransform):
         self.file_name_suffix = file_name_suffix
         self.delimiter = csv_delimiter_by_filename(path + file_name_suffix)
 
-    def expand(self, pcoll):  # pylint: disable=arguments-differ
+    def expand(self, input_or_inputs):
         return (
-            pcoll |
+            input_or_inputs |
             "ToList" >> beam.Map(DictToList(self.columns)) |
             "Format" >> TransformAndLog(
                 beam.Map(lambda x: format_csv_rows([x], delimiter=self.delimiter)),
@@ -182,9 +182,9 @@ class ReadDictCsv(beam.PTransform):
         self.limit = limit
         self.row_num = 0
 
-    def expand(self, pcoll):  # pylint: disable=arguments-differ
+    def expand(self, input_or_inputs):
         return (
-            pcoll |
+            input_or_inputs |
             beam.io.Read(CsvFileSource(
                 self.filename,
                 delimiter=self.delimiter,
