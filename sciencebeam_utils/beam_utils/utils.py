@@ -72,8 +72,8 @@ class GroupTransforms(beam.PTransform):
         super(GroupTransforms, self).__init__()
         self.expand_fn = expand_fn
 
-    def expand(self, pcoll):  # pylint: disable=W0221
-        return self.expand_fn(pcoll)
+    def expand(self, input_or_inputs):
+        return self.expand_fn(input_or_inputs)
 
 
 def TransformAndCount(transform, counter_name, counter_value_fn=None):

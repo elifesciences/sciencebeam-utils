@@ -21,7 +21,7 @@ from sciencebeam_utils.utils.file_list import (
 
 FILE_1 = 'file1.pdf'
 FILE_2 = 'file2.pdf'
-UNICODE_FILE_1 = u'file1\u1234.pdf'
+UNICODE_FILE_1 = 'file1\u1234.pdf'
 FILE_LIST = [FILE_1, FILE_2]
 
 

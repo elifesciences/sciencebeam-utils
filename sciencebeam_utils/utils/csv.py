@@ -19,8 +19,8 @@ def csv_delimiter_by_filename(filename):
     return ','
 
 
-def open_csv_output(filename: str) -> ContextManager[IO]:
-    return open(filename, 'w')  # pylint: disable=consider-using-with
+def open_csv_output(filename: str, encoding: str = 'utf-8') -> ContextManager[IO]:
+    return open(filename, 'w', encoding=encoding)  # pylint: disable=consider-using-with
 
 
 def write_csv_rows(writer, iterable):
