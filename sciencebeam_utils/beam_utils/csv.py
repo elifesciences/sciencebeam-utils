@@ -141,7 +141,7 @@ class CsvFileSource(FileBasedSource):
                 'header is required for the CSV reader to provide dictionary output'
             )
 
-    def read_records(self, file_name, range_tracker):  # noqa: E501 pylint: disable=arguments-differ,unused-argument
+    def read_records(self, file_name, offset_range_tracker):
         # If a multi-file pattern was specified as a source then make sure the
         # start/end offsets use the default values for reading the entire file.
         headers = None
