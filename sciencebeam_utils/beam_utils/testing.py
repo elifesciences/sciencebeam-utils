@@ -50,8 +50,8 @@ def get_logger():
 
 class TestContext:
     def __init__(self):
-        self.file_content_map = dict()
-        self.object_map = dict()
+        self.file_content_map = {}
+        self.object_map = {}
 
     def set_file_content(self, name, content):
         get_logger().debug('set_file_content: %s (size: %d)', name, len(content))
@@ -256,7 +256,7 @@ def patch_beam_io():
 def get_counter_values(pipeline_result, names, wait_until_finish=True):
     if wait_until_finish:
         pipeline_result.wait_until_finish()
-    counter_values = dict()
+    counter_values = {}
     for name in names:
         counter = pipeline_result.metrics().query(
             MetricsFilter().with_name(name)
