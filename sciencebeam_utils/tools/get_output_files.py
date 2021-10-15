@@ -14,6 +14,7 @@ from sciencebeam_utils.utils.file_path import (
 )
 
 from sciencebeam_utils.tools.check_file_list import (
+    DEFAULT_EXAMPLE_COUNT,
     check_files_and_report_result
 )
 
@@ -81,6 +82,11 @@ def parse_args(argv=None):
         '--check-limit', type=int, required=False,
         help='limit the files to check'
     )
+    parser.add_argument(
+        '--example-count', type=int, required=False,
+        default=DEFAULT_EXAMPLE_COUNT,
+        help='number of missing examples to display'
+    )
 
     add_default_args(parser)
 
@@ -120,7 +126,10 @@ def run(opt):
             'checking %d (out of %d) files...',
             len(check_file_list), len(target_file_list)
         )
-        check_files_and_report_result(check_file_list)
+        check_files_and_report_result(
+            check_file_list,
+            example_count=opt.example_count
+        )
 
     if opt.use_relative_paths:
         target_file_list = to_relative_file_list(opt.output_base_path, target_file_list)
