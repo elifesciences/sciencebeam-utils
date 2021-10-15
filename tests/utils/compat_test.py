@@ -6,7 +6,7 @@ from sciencebeam_utils.utils.compat import (
 
 
 ASCII_VALUE = 'abc'
-UNICODE_VALUE = u'a\u1234b'
+UNICODE_VALUE = 'a\u1234b'
 UNICODE_STR = UNICODE_VALUE.encode('utf-8') if PY2 else UNICODE_VALUE
 
 

@@ -24,7 +24,7 @@ from sciencebeam_utils.beam_utils.csv import (
 
 MODULE_UNDER_TEST = 'sciencebeam_utils.beam_utils.csv'
 
-UNICODE_STR_1 = u'file1\u1234.pdf'
+UNICODE_STR_1 = 'file1\u1234.pdf'
 
 
 @contextmanager
