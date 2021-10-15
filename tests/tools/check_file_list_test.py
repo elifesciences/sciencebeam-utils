@@ -4,6 +4,7 @@ import pytest
 
 import sciencebeam_utils.tools.check_file_list as check_file_list_module
 from sciencebeam_utils.tools.check_file_list import (
+    DEFAULT_EXAMPLE_COUNT,
     map_file_list_to_file_exists,
     format_file_list,
     format_file_exists_results,
@@ -63,7 +64,10 @@ class TestCheckFileListAndReportResults:
                 map_file_list_to_file_exists_mock.return_value = [True, True]
                 check_files_and_report_result([FILE_1, FILE_2])
                 map_file_list_to_file_exists_mock.assert_called_with([FILE_1, FILE_2])
-                format_file_exists_results_mock.assert_called_with([True, True], [FILE_1, FILE_2])
+                format_file_exists_results_mock.assert_called_with(
+                    [True, True], [FILE_1, FILE_2],
+                    example_count=DEFAULT_EXAMPLE_COUNT
+                )
 
     def test_should_raise_error_if_none_of_the_files_were_found(self):
         m = check_file_list_module

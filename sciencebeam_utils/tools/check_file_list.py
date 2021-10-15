@@ -21,6 +21,9 @@ from sciencebeam_utils.tools.tool_utils import (
 LOGGER = logging.getLogger(__name__)
 
 
+DEFAULT_EXAMPLE_COUNT = 3
+
+
 def parse_args(argv=None):
     parser = argparse.ArgumentParser(
         'Check file list'
@@ -36,6 +39,11 @@ def parse_args(argv=None):
         default='url',
         help='csv/tsv column (ignored for plain file list)'
     )
+    parser.add_argument(
+        '--example-count', type=int, required=False,
+        default=DEFAULT_EXAMPLE_COUNT,
+        help='number of missing examples to display'
+    )
 
     add_limit_args(parser)
     add_default_args(parser)
@@ -49,10 +57,14 @@ def map_file_list_to_file_exists(file_list):
 
 
 def format_file_list(file_list):
-    return '%s' % file_list
+    return str(file_list)
 
 
-def format_file_exists_results(file_exists, file_list):
+def format_file_exists_results(
+    file_exists,
+    file_list,
+    example_count: int = DEFAULT_EXAMPLE_COUNT
+):
     if not file_exists:
         return 'empty file list'
     file_exists_count = sum(file_exists)
@@ -63,7 +75,7 @@ def format_file_exists_results(file_exists, file_list):
             file_exists_count, 100.0 * file_exists_count / len(file_exists),
             file_missing_count, 100.0 * file_missing_count / len(file_exists),
             (
-                ' (example missing: %s)' % format_file_list(files_missing[:3])
+                ' (example missing: %s)' % format_file_list(files_missing[:example_count])
                 if files_missing
                 else ''
             )
@@ -71,9 +83,14 @@ def format_file_exists_results(file_exists, file_list):
     )
 
 
-def check_files_and_report_result(file_list):
+def check_files_and_report_result(
+    file_list,
+    example_count: int = DEFAULT_EXAMPLE_COUNT
+):
     file_exists = map_file_list_to_file_exists(file_list)
-    LOGGER.info('%s', format_file_exists_results(file_exists, file_list))
+    LOGGER.info(
+        '%s', format_file_exists_results(file_exists, file_list, example_count=example_count)
+    )
     assert sum(file_exists) > 0
 
 
@@ -83,7 +100,7 @@ def run(opt):
         column=opt.file_column,
         limit=opt.limit
     )
-    check_files_and_report_result(file_list)
+    check_files_and_report_result(file_list, example_count=opt.example_count)
 
 
 def main(argv=None):
