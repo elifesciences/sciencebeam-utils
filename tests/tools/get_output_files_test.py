@@ -4,6 +4,7 @@ from unittest.mock import patch, ANY
 import pytest
 
 from sciencebeam_utils.tools import get_output_files
+from sciencebeam_utils.tools.check_file_list import DEFAULT_EXAMPLE_COUNT
 from sciencebeam_utils.tools.get_output_files import (
     get_output_file_list,
     run,
@@ -141,7 +142,8 @@ class TestRun:
         opt.check = True
         run(opt)
         check_files_and_report_result_mock.assert_called_with(
-            get_output_file_list_mock.return_value
+            get_output_file_list_mock.return_value,
+            example_count=DEFAULT_EXAMPLE_COUNT
         )
 
     def test_should_limit_files_to_check(
@@ -156,7 +158,8 @@ class TestRun:
         load_file_list_mock.return_value = [FILE_1, FILE_2]
         run(opt)
         check_files_and_report_result_mock.assert_called_with(
-            get_output_file_list_mock.return_value[:opt.check_limit]
+            get_output_file_list_mock.return_value[:opt.check_limit],
+            example_count=DEFAULT_EXAMPLE_COUNT
         )
 
     def test_should_save_relative_paths_if_enabled(
